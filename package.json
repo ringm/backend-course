@@ -1,0 +1,38 @@
+{
+  "name": "backend-course",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon src/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ringm/backend-course.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ringm/backend-course/issues"
+  },
+  "homepage": "https://github.com/ringm/backend-course#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "nodemonConfig": {
+    "watch": [
+      "src",
+      "data",
+      "lib"
+    ],
+    "ext": "js,json",
+    "ignore": [
+      "node_modules"
+    ]
+  }
+}
