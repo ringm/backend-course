@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "name": "Reloj Nike",
+    "description": "Reloj deportivo Nike",
+    "code": "234345",
+    "price": 200,
+    "status": "false",
+    "stock": 1,
+    "category": "watches"
+  },
+  {
+    "id": 2,
+    "name": "Zapatillas New Balance",
+    "description": "Zapatillas Running",
+    "code": "245",
+    "price": 2500,
+    "status": "true",
+    "stock": 14,
+    "category": "shoes"
+  },
+  {
+    "id": 3,
+    "name": "Buzo Adidas",
+    "description": "Buzo Adidas Selección Argentina",
+    "code": "145",
+    "price": 22500,
+    "status": "true",
+    "stock": 28,
+    "category": "apparel"
+  }
+]

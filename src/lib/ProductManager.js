@@ -19,7 +19,7 @@ export class ProductManager {
     await fs.promises.writeFile(this.filePath, JSON.stringify(products, null, "\t"));
   }
 
-  async addProduct(title, price, code, description = "", thumbnail = "Sin imágen", stock = 1) {
+  async addProduct(product) {
     const createID = (products) => {
       const prodsLen = products.length;
       if (prodsLen === 0) {
@@ -31,18 +31,13 @@ export class ProductManager {
 
     try {
       if (this.#fileExists()) {
-        const products = this.#readProducts();
-        const product = { id: createID(products), title, description, price, thumbnail, code, stock };
-        const productInStock = products.find((p) => p.code === product.code);
-
-        if (productInStock) {
-          throw new Error("Product already in stock.");
-        }
-
-        products.push(product);
-        await this.#saveProducts(products);
-        this.products = products;
+        const currentProducts = this.#readProducts();
+        const newProduct = { id: createID(currentProducts), ...product };
+        currentProducts.push(newProduct);
+        await this.#saveProducts(currentProducts);
+        this.products = currentProducts;
         console.log("Product added!");
+        return newProduct;
       } else {
         throw new Error("File not found.");
       }
@@ -54,7 +49,7 @@ export class ProductManager {
   async updateProduct(id, product) {
     try {
       if (this.#fileExists()) {
-        const products = await this.#readProducts();
+        const products = this.#readProducts();
         const productToUpdate = products.find((p) => p.id === id);
 
         if (!productToUpdate) {
@@ -70,6 +65,7 @@ export class ProductManager {
         await this.#saveProducts(products);
         this.products = products;
         console.log("Product updated!");
+        return productToUpdate;
       } else {
         throw new Error("File not found.");
       }
@@ -88,8 +84,9 @@ export class ProductManager {
           throw new Error("Product not found.");
         }
 
+        const deletedProduct = products.find((p) => p.id === id);
         await this.#saveProducts(newProducts);
-        console.log("Product deleted succesfully.");
+        return deletedProduct;
       } else {
         throw new Error("File not found.");
       }
@@ -98,7 +95,7 @@ export class ProductManager {
     }
   }
 
-  async getProducts(limit = undefined) {
+  async getProducts(limit) {
     try {
       if (this.#fileExists()) {
         const products = this.#readProducts();
