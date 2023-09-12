@@ -1,10 +1,12 @@
 import { Router } from "express";
 import { ProductManager } from "../lib/ProductManager.js";
 import { productSchema } from "../models/productSchema.js";
-import { hastValidProperty } from "../helpers/validation.js";
+import { uploader } from "../middleware/uploader.js";
+import { __dirname } from "../utils.js";
+import { hasProductValues } from "../middleware/hasProductValues.js";
 
 const router = Router();
-const Manager = new ProductManager("./src/data/products.json");
+const Manager = new ProductManager(`${__dirname}/data/products.json`);
 
 router.get("/", async (req, res) => {
   const { limit } = req.query;
@@ -29,34 +31,32 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", uploader.array("thumbnails"), async (req, res) => {
   try {
     const { error } = productSchema.validate(req.body, { abortEarly: false });
     if (error) {
       res.status(400).json({ error: "Bad request", details: error.details.map((e) => e.message) });
     } else {
-      const product = await Manager.addProduct(req.body);
-      res.status(200).json({ message: "Product added", product: product });
+      const thumbnails = req.files?.map((file) => file.path);
+      const product = await Manager.addProduct({ ...req.body, thumbnails });
+      res.status(200).json({ message: "Product added", product });
     }
   } catch (e) {
     res.status(e.status).json({ message: "An error ocurred.", details: e.message });
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", hasProductValues, uploader.array("thumbnails"), async (req, res) => {
   try {
-    if (hastValidProperty(req.body, productSchema)) {
-      const updatedProduct = await Manager.updateProduct(parseInt(req.params.id), req.body);
-      if (updatedProduct) {
-        res.status(200).json({ message: "Product updated", product: updatedProduct });
-      } else {
-        res.status(404).json({ message: "Product not fonud.", details: "Invalid ID." });
-      }
+    const thumbnails = req.files ? req.files?.map((file) => file.path) : [];
+    const updatedProduct = await Manager.updateProduct(parseInt(req.params.id), { ...req.body, thumbnails });
+    if (updatedProduct) {
+      res.status(200).json({ message: "Product updated", product: updatedProduct });
     } else {
-      res.status(400).json({ error: "Bad request", message: "Invalid properties" });
+      res.status(404).json({ message: "Product not fonud.", details: "Invalid ID." });
     }
   } catch (e) {
-    res.status(e.status).json({ message: "An error ocurred.", details: e.message });
+    res.status(500).json({ message: "An error ocurred.", details: e.message });
   }
 });
 

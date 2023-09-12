@@ -1,9 +1,12 @@
 import { Router } from "express";
 import { CartManager } from "../lib/CartManager.js";
 import { productInCartSchema } from "../models/cartSchema.js";
+import { __dirname } from "../utils.js";
+import { cartExists } from "../middleware/cartExists.js";
+import { productExists } from "../middleware/productExists.js";
 
 const router = Router();
-const Manager = new CartManager("./src/data/carts.json");
+const Manager = new CartManager(`${__dirname}/data/carts.json`);
 
 router.post("/", async (req, res) => {
   try {
@@ -31,15 +34,19 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/:cid/product/:pid", async (req, res) => {
+router.post("/:cid/product/:pid", cartExists, productExists, async (req, res) => {
   try {
     const { error } = productInCartSchema.validate(req.body, { abortEarly: false });
     if (error) {
       res.status(400).json({ error: "Bad request", details: error.details.map((e) => e.message) });
     } else {
-      const cart = await Manager.addProductToCart(parseInt(req.params.cid), parseInt(req.params.pid), req.body.qty);
+      const cart = await Manager.addProductToCart(
+        parseInt(req.params.cid),
+        parseInt(req.params.pid),
+        req.body.quantity,
+      );
       if (cart) {
-        res.status(200).json({ message: "Product added to cart", cart: cart });
+        res.status(200).json({ message: "Product added to cart", cart });
       } else {
         res.status(400).json({ error: "An error ocurred.", deatils: "Could not add product to the cart." });
       }

@@ -1,13 +1,14 @@
-export const hastValidProperty = (data, schema) => {
-  // Iterate through the properties in your schema
-  for (const key of Object.keys(schema.describe().keys)) {
-    // Validate each property against the data
-    const { error } = schema.extract(key).validate(data[key]);
-    // If there's no error for a property, return true
-    if (!error) {
-      return true;
+export const areValuesValid = (data, schema) => {
+  const keys = Object.keys(schema.describe().keys);
+  const errors = Object.keys(data).reduce((acc, key) => {
+    if (keys.includes(key)) {
+      const { error } = schema.extract(key).validate(data[key]);
+      if (error) {
+        return [...acc, error.details.map((e) => `${key} ${e.message}.`)];
+      }
+      return acc;
     }
-  }
-  // If no properties are valid, return false
-  return false;
+    return [...acc, `${key} is not a valid property.`];
+  }, []);
+  return errors;
 };

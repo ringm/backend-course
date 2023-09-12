@@ -46,7 +46,7 @@ export class CartManager {
     }
   }
 
-  async addProductToCart(cartId, productId, qty) {
+  async addProductToCart(cartId, productId, quantity) {
     try {
       if (this.#fileExists()) {
         const carts = this.#readCarts();
@@ -54,9 +54,9 @@ export class CartManager {
         const productIdx = cart.products.findIndex((p) => p.id === productId);
 
         if (productIdx >= 0) {
-          cart.products[productIdx].qty += qty;
+          cart.products[productIdx].quantity += quantity;
         } else {
-          cart.products.push({ id: productId, qty });
+          cart.products.push({ id: productId, quantity });
         }
         console.log("Product added to cart!");
         await this.#saveCarts(carts);
