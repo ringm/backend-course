@@ -37,7 +37,7 @@ router.post("/", uploader.array("thumbnails"), async (req, res) => {
     if (error) {
       res.status(400).json({ error: "Bad request", details: error.details.map((e) => e.message) });
     } else {
-      const thumbnails = req.files?.map((file) => file.path);
+      const thumbnails = req.files?.map((file) => `/img/${file.filename}`);
       const product = await Manager.addProduct({ ...req.body, thumbnails });
       res.status(200).json({ message: "Product added", product });
     }
