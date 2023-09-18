@@ -11,7 +11,9 @@ const renderCard = (product) => {
     "border-solid",
     "border",
     "border-slate-300",
-    "w-56",
+    "w-48",
+    "max-h-96",
+    "lg:w-56",
     "rounded-lg",
     "overflow-hidden",
     "p-2",
@@ -20,7 +22,7 @@ const renderCard = (product) => {
   );
 
   const imgCarrousel = document.createElement("div");
-  imgCarrousel.classList.add("embla", "overflow-hidden", "mb-2", "h-52", "rounded-lg");
+  imgCarrousel.classList.add("embla", "overflow-hidden", "mb-2", "h-44", "lg:h-52", "rounded-lg");
 
   const carrouselContainer = document.createElement("div");
   carrouselContainer.classList.add("embla__container", "flex", "h-full");
@@ -52,7 +54,8 @@ const renderCard = (product) => {
   noImgContainer.classList.add(
     "overflow-hidden",
     "mb-2",
-    "h-52",
+    "h-44",
+    "lg:h-52",
     "rounded-lg",
     "bg-slate-100",
     "flex",
@@ -77,7 +80,7 @@ const renderCard = (product) => {
 
   if (product.thumbnails.length > 0) {
     card.append(imgCarrousel);
-    EmblaCarousel(imgCarrousel, { loop: false });
+    const embla = EmblaCarousel(imgCarrousel, { loop: false });
   } else {
     card.append(noImgContainer);
   }
@@ -87,6 +90,10 @@ const renderCard = (product) => {
 
   return card;
 };
+
+document.addEventListener("DOMContentLoaded", function () {
+  socket.emit("get-products");
+});
 
 form.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -102,16 +109,14 @@ form.addEventListener("submit", (e) => {
   socket.emit("create-product", jsonData);
 });
 
-socket.emit("get-products");
-
-socket.on("products", (data) => {
+socket.on("render-products", (data) => {
   data.forEach((product) => {
     const card = renderCard(product);
     cardsContainer.append(card);
   });
 });
 
-socket.on("product", (product) => {
+socket.on("render-product", (product) => {
   const card = renderCard(product);
   cardsContainer.append(card);
 });

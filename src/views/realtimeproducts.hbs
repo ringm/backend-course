@@ -1,7 +1,7 @@
-<div class="w-full pt-10">
-  <h1 class="text-2xl text-center text-blue-500 mb-10 font-bold">yo soy realtime products view</h1>
-  <div class="flex w-full">
-    <div class="w-1/3 p-10">
+<div class="w-full">
+  <h1 class="text-2xl text-center text-blue-500 mb-10 font-bold">Productos en tiempo real</h1>
+  <div class="md:flex w-full">
+    <div class="md:w-1/3 max-w-2xl px-4 lg:px-10 mb-10 md:mb-0">
       <h2 class="text-lg text-blue-500 font-bold mb-4">Agregar producto</h2>
       <form id="productForm">
 
@@ -101,14 +101,16 @@
             />
           </label>
         </div>
-        <button type="submit" class="bg-blue-500 text-white py-3 px-5 rounded-md">Agregar producto</button>
+        <button
+          type="submit"
+          class="bg-blue-500 text-white py-3 px-5 rounded-md hover:bg-blue-400 transition-colors"
+        >Agregar producto</button>
       </form>
     </div>
-    <div id="cards-container" class="w-2/3 p-10 flex flex-wrap gap-4">
+    <div id="cards-container" class="md:w-2/3 px-4 lg:px-10 flex flex-wrap gap-2 lg:gap-4">
     </div>
   </div>
 </div>
 <script src="/socket.io/socket.io.js"></script>
 <script src="https://unpkg.com/embla-carousel/embla-carousel.umd.js"></script>
-<script src="https://unpkg.com/embla-carousel-autoplay/embla-carousel-autoplay.umd.js"></script>
 <script src="/js/realtimeproducts.js"></script>

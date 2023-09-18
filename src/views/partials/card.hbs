@@ -1,6 +1,8 @@
-<div class="card border-solid border border-slate-300 w-56 rounded-lg overflow-hidden p-2 flex flex-col">
+<div
+  class="card border-solid border border-slate-300 w-48 lg:w-56 max-h-96 rounded-lg overflow-hidden p-2 flex flex-col"
+>
   {{#if thumbnails.length}}
-    <div class="embla overflow-hidden mb-2 h-52 rounded-lg">
+    <div class="embla overflow-hidden mb-2 h-44 lg:h-52 rounded-lg">
       <div class="embla__container flex h-full">
         {{#each thumbnails}}
           <div
@@ -12,7 +14,7 @@
       </div>
     </div>
   {{else}}
-    <div class="overflow-hidden mb-2 h-52 rounded-lg bg-slate-100 flex items-center justify-center">
+    <div class="overflow-hidden mb-2 h-44 lg:h-52 rounded-lg bg-slate-100 flex items-center justify-center">
       <i class="iconoir-remove-media-image text-2xl text-slate-600"></i>
     </div>
   {{/if}}

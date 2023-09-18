@@ -36,12 +36,12 @@ socketServer.on("connection", (socket) => {
 
   socket.on("get-products", async () => {
     const products = await PManager.getProducts();
-    socket.emit("products", products);
+    socket.emit("render-products", products);
   });
 
   socket.on("get-product", async (id) => {
     const product = await PManager.getProductById(id);
-    socket.emit("product", product);
+    socket.emit("render-product", product);
   });
 
   socket.on("create-product", async (data) => {
