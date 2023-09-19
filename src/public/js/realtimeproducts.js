@@ -64,6 +64,10 @@ const renderCard = (product) => {
     "border-white",
   );
 
+  const deleteButton = document.createElement("button");
+  deleteButton.classList.add("bg-blue-500", "text-white", "px-4", "py-3", "rounded-md", "hover:bg-blue-400");
+  deleteButton.textContent = "Borrar";
+
   const imgCarrousel = document.createElement("div");
   imgCarrousel.classList.add("embla", "overflow-hidden", "h-44", "lg:h-52", "rounded-lg");
 
@@ -118,11 +122,11 @@ const renderCard = (product) => {
   title.innerText = product.name;
 
   const desc = document.createElement("p");
-  desc.classList.add("text-sm", "line-clamp-2", "text-ellipsis", "mb-4", "text-slate-600");
+  desc.classList.add("text-sm", "line-clamp-2", "text-ellipsis", "text-slate-600");
   desc.innerText = product.description;
 
   const price = document.createElement("p");
-  price.classList.add("mt-auto", "font-bold", "text-blue-500");
+  price.classList.add("mt-auto", "font-bold", "text-blue-500", "mb-1");
   price.innerText = `$${product.price}`;
 
   if (product.thumbnails.length > 0) {
@@ -163,9 +167,15 @@ const renderCard = (product) => {
   } else {
     card.append(noImgContainer);
   }
+
+  deleteButton.addEventListener("click", () => {
+    socket.emit("delete-product", product.id);
+  });
+
   card.append(title);
   card.append(desc);
   card.append(price);
+  card.append(deleteButton);
 
   return card;
 };
@@ -177,29 +187,18 @@ document.addEventListener("DOMContentLoaded", function () {
 form.addEventListener("submit", (e) => {
   e.preventDefault();
   const formData = new FormData(form);
-  const jsonData = {};
+  const jsonData = { thumbnails: [] };
   for (const [key, value] of formData.entries()) {
-    if (key === "thumbnails") {
-      jsonData[key] = Object.values(fileInput.files).map((file) => `/img/${file.name}`);
-    } else {
-      jsonData[key] = value;
-    }
+    jsonData[key] = value;
   }
   socket.emit("create-product", jsonData);
+  form.reset();
 });
 
 socket.on("render-products", (data) => {
+  cardsContainer.innerHTML = "";
   data.forEach((product) => {
     const card = renderCard(product);
     cardsContainer.append(card);
   });
-});
-
-socket.on("render-product", (product) => {
-  const card = renderCard(product);
-  cardsContainer.append(card);
-});
-
-socket.on("product-created", (id) => {
-  socket.emit("get-product", id);
 });

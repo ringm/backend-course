@@ -1,72 +1,82 @@
 [
-  {
-    "id": 1,
-    "name": "Auriculares JBL",
-    "description": "auriculares bluetooth",
-    "price": 6800,
-    "code": "a_45456_sdfd",
-    "stock": 345,
-    "status": false,
-    "category": "headphones",
-    "thumbnails": []
-  },
-  {
-    "id": 2,
-    "name": "Camiseta Boca Jrs",
-    "description": "Camiseta titular boca jrs 2023",
-    "price": "3125",
-    "code": "asdasd",
-    "stock": "12",
-    "status": "true",
-    "category": "fooball",
-    "thumbnails": ["/img/1694455249129-camiseta-boca-01.png", "/img/1694455249147-camiseta-boca-02.png"]
-  },
-  {
-    "id": 3,
-    "name": "Campera Nike ",
-    "description": "Campera Sportswear Essential Repel",
-    "price": "12900",
-    "code": "Nkasida",
-    "stock": "9",
-    "status": "false",
-    "category": "running",
-    "thumbnails": ["/img/1694455365397-nike-campera.jpeg"]
-  },
-  {
-    "id": 4,
-    "name": "Botines Nike",
-    "description": "Nike Zoom Mercurial Dream Speed Vapor 15 Academy TF Nike Zoom Mercurial Dream Speed Vapor 15 Academy TF",
-    "price": "64700",
-    "code": "NKASDIG",
-    "stock": "4",
-    "status": "true",
-    "category": "football",
-    "thumbnails": [
-      "/img/1694455530111-602177-1200-1200.webp",
-      "/img/1694455530112-DV2426_405_A_PREM.jpg",
-      "/img/1694455530117-DV2426_405_B_PREM.jpg"
-    ]
-  },
-  {
-    "id": 5,
-    "name": "Pantalon adidas",
-    "description": "Pantalon adidas Designed For Gameday",
-    "price": "35400",
-    "code": "ASFDGO",
-    "stock": "18",
-    "status": "true",
-    "category": "jogging",
-    "thumbnails": ["/img/1694455762916-ADHE5038-1.jpeg", "/img/1694455762920-ADHE5038-3.jpeg"]
-  },
-  {
-    "id": 6,
-    "name": "Stream Deck",
-    "description": "Pantalon adidas Designed For Gameday",
-    "price": "35400",
-    "code": "ASFDGO",
-    "stock": "18",
-    "status": "true",
-    "category": "jogging",
-    "thumbnails": ["/img/1694735762611-D_NQ_NP_2X_624956-MLA41788412810_052020-F.webp"]
-  }
+	{
+		"id": 2,
+		"name": "Camiseta Boca Jrs",
+		"description": "Camiseta titular boca jrs 2023",
+		"price": "3125",
+		"code": "asdasd",
+		"stock": "12",
+		"status": "true",
+		"category": "fooball",
+		"thumbnails": [
+			"/img/1694455249129-camiseta-boca-01.png",
+			"/img/1694455249147-camiseta-boca-02.png"
+		]
+	},
+	{
+		"id": 3,
+		"name": "Campera Nike ",
+		"description": "Campera Sportswear Essential Repel",
+		"price": "12900",
+		"code": "Nkasida",
+		"stock": "9",
+		"status": "false",
+		"category": "running",
+		"thumbnails": [
+			"/img/1694455365397-nike-campera.jpeg"
+		]
+	},
+	{
+		"id": 4,
+		"name": "Botines Nike",
+		"description": "Nike Zoom Mercurial Dream Speed Vapor 15 Academy TF Nike Zoom Mercurial Dream Speed Vapor 15 Academy TF",
+		"price": "64700",
+		"code": "NKASDIG",
+		"stock": "4",
+		"status": "true",
+		"category": "football",
+		"thumbnails": [
+			"/img/1694455530111-602177-1200-1200.webp",
+			"/img/1694455530112-DV2426_405_A_PREM.jpg",
+			"/img/1694455530117-DV2426_405_B_PREM.jpg"
+		]
+	},
+	{
+		"id": 5,
+		"name": "Pantalon adidas",
+		"description": "Pantalon adidas Designed For Gameday",
+		"price": "35400",
+		"code": "ASFDGO",
+		"stock": "18",
+		"status": "true",
+		"category": "jogging",
+		"thumbnails": [
+			"/img/1694455762916-ADHE5038-1.jpeg",
+			"/img/1694455762920-ADHE5038-3.jpeg"
+		]
+	},
+	{
+		"id": 6,
+		"name": "Stream Deck",
+		"description": "Equipo para stream online en vivo",
+		"price": "35400",
+		"code": "ASFDGO",
+		"stock": "18",
+		"status": "true",
+		"category": "jogging",
+		"thumbnails": [
+			"/img/1694735762611-D_NQ_NP_2X_624956-MLA41788412810_052020-F.webp"
+		]
+	},
+	{
+		"id": 7,
+		"thumbnails": [],
+		"name": "Camiseta River Plate",
+		"description": "Camiseta titular river plate temporada 23/24",
+		"category": "zapatillas",
+		"code": "sdf45456",
+		"status": "false",
+		"price": "12700",
+		"stock": "18"
+	}
 ]

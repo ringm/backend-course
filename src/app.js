@@ -39,13 +39,15 @@ socketServer.on("connection", (socket) => {
     socket.emit("render-products", products);
   });
 
-  socket.on("get-product", async (id) => {
-    const product = await PManager.getProductById(id);
-    socket.emit("render-product", product);
+  socket.on("create-product", async (data) => {
+    await PManager.addProduct(data);
+    const products = await PManager.getProducts();
+    socket.emit("render-products", products);
   });
 
-  socket.on("create-product", async (data) => {
-    const newProduct = await PManager.addProduct(data);
-    socket.emit("product-created", newProduct.id);
+  socket.on("delete-product", async (id) => {
+    await PManager.deleteProduct(id);
+    const products = await PManager.getProducts();
+    socket.emit("render-products", products);
   });
 });

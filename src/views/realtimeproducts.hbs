@@ -51,6 +51,7 @@
             <option class="text-slate-700" value="camperas">Camperas</option>
             <option class="text-slate-700" value="relojes">Relojes</option>
             <option class="text-slate-700" value="anteojos">Anteojos</option>
+            <option class="text-slate-700" value="anteojos">Otro</option>
           </select>
         </label>
 
@@ -66,14 +67,14 @@
 
         <fieldset class="mb-4">
           <legend class="flex flex-col text-sm text-slate-600 mb-1">Status</legend>
-          <label class="mr-4 text-slate-700">
+          <label class="mr-4 text-slate-700 cursor-pointer">
             Publicado
-            <input type="radio" name="status" value="true" />
+            <input type="radio" name="status" value="true" class="cursor-pointer" />
           </label>
 
-          <label class="text-slate-700">
+          <label class="text-slate-700 cursor-pointer">
             No publicado
-            <input type="radio" name="status" value="false" />
+            <input type="radio" name="status" value="false" class="cursor-pointer" />
           </label>
         </fieldset>
 
@@ -108,7 +109,7 @@
         >Agregar producto</button>
       </form>
     </div>
-    <div id="cards-container" class="md:w-2/3 px-4 lg:px-10 flex flex-wrap gap-2 lg:gap-4">
+    <div id="cards-container" class="md:w-2/3 px-4 lg:px-10 flex flex-wrap gap-2 lg:gap-4 pb-4">
     </div>
   </div>
 </div>
