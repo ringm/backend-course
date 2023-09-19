@@ -21,8 +21,51 @@ const renderCard = (product) => {
     "flex-col",
   );
 
+  const carrouselWrapper = document.createElement("div");
+  carrouselWrapper.classList.add("relative", "mb-2");
+
+  const forwardButton = document.createElement("i");
+  forwardButton.classList.add(
+    "invisible",
+    "forward-arrow",
+    "absolute",
+    "right-2",
+    "top-1/2",
+    "iconoir-nav-arrow-right",
+    "text-md",
+    "text-white",
+    "bg-blue-500",
+    "rounded-full",
+    "cursor-pointer",
+    "p-1",
+    "transform",
+    "-translate-y-1/2",
+    "border",
+    "border-white",
+  );
+
+  const backButton = document.createElement("i");
+  backButton.classList.add(
+    "invisible",
+    "back-arrow",
+    "absolute",
+    "left-2",
+    "top-1/2",
+    "iconoir-nav-arrow-left",
+    "text-md",
+    "text-white",
+    "bg-blue-500",
+    "rounded-full",
+    "cursor-pointer",
+    "p-1",
+    "transform",
+    "-translate-y-1/2",
+    "border",
+    "border-white",
+  );
+
   const imgCarrousel = document.createElement("div");
-  imgCarrousel.classList.add("embla", "overflow-hidden", "mb-2", "h-44", "lg:h-52", "rounded-lg");
+  imgCarrousel.classList.add("embla", "overflow-hidden", "h-44", "lg:h-52", "rounded-lg");
 
   const carrouselContainer = document.createElement("div");
   carrouselContainer.classList.add("embla__container", "flex", "h-full");
@@ -48,6 +91,9 @@ const renderCard = (product) => {
       carrouselContainer.append(carrouselSlide);
     });
     imgCarrousel.append(carrouselContainer);
+    carrouselWrapper.append(imgCarrousel);
+    carrouselWrapper.append(backButton);
+    carrouselWrapper.append(forwardButton);
   }
 
   const noImgContainer = document.createElement("div");
@@ -62,6 +108,7 @@ const renderCard = (product) => {
     "items-center",
     "justify-center",
   );
+
   const missingImgIcon = document.createElement("i");
   missingImgIcon.classList.add("iconoir-remove-media-image", "text-2xl", "text-slate-600");
   noImgContainer.append(missingImgIcon);
@@ -79,8 +126,40 @@ const renderCard = (product) => {
   price.innerText = `$${product.price}`;
 
   if (product.thumbnails.length > 0) {
-    card.append(imgCarrousel);
+    card.append(carrouselWrapper);
     const embla = EmblaCarousel(imgCarrousel, { loop: false });
+
+    const displayArrows = (emblaApi, eventName) => {
+      if (eventName === "init") {
+        embla.reInit();
+      }
+      if (!emblaApi.canScrollNext()) {
+        forwardButton.classList.add("invisible");
+      } else {
+        forwardButton.classList.remove("invisible");
+      }
+      if (!emblaApi.canScrollPrev()) {
+        backButton.classList.add("invisible");
+      } else {
+        backButton.classList.remove("invisible");
+      }
+    };
+
+    const removeEventListener = () => {
+      emblaApi.off("select", displayArrows);
+      emblaApi.off("init", displayArrows);
+    };
+
+    backButton.addEventListener("click", () => {
+      embla.scrollPrev();
+    });
+
+    forwardButton.addEventListener("click", () => {
+      embla.scrollNext();
+    });
+
+    embla.on("select", displayArrows);
+    embla.on("init", displayArrows);
   } else {
     card.append(noImgContainer);
   }
