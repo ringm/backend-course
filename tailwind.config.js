@@ -1,8 +1,12 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ["src/views/**/*.hbs", "src/views/*.hbs"],
+  content: ["src/views/**/*.hbs", "src/views/*.hbs", "src/public/js/*.js"],
   theme: {
-    extend: {},
+    extend: {
+      height: {
+        "chat": "calc(100vh - 150px)",
+      },
+    },
   },
   plugins: [require("@tailwindcss/line-clamp")],
 };

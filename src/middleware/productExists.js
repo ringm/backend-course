@@ -1,10 +1,7 @@
-import { ProductManager } from "../lib/ProductManager.js";
-import { __dirname } from "../utils.js";
-
-const Manager = new ProductManager(`${__dirname}/data/products.json`);
+import { productService } from "../dao/index.js";
 
 export const productExists = async (req, res, next) => {
-  const product = await Manager.getProductById(parseInt(req.params.pid));
+  const product = await productService.getProductById(req.params.pid);
   if (product) {
     next();
   } else {

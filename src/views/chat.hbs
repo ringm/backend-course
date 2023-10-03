@@ -1,0 +1,16 @@
+<div class="w-full max-w-2xl flex flex-col">
+  <div id="messages-container" class="flex flex-col gap-4 pb-10 overflow-y-scroll h-chat"></div>
+  <form id="message-form">
+    <div class="flex justify-between mt-auto absolute w-full max-w-2xl bottom-4 bg-white">
+      <input id="message-input" type="text" class="border border-slate-500 rounded-lg w-full mr-4 p-2" />
+      <button
+        id="send-message"
+        type="submit"
+        class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
+      >Send</button>
+    </div>
+  </form>
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/js/chat.js"></script>

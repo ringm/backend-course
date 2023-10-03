@@ -1,10 +1,7 @@
-import { CartManager } from "../lib/CartManager.js";
-import { __dirname } from "../utils.js";
-
-const Manager = new CartManager(`${__dirname}/data/carts.json`);
+import { cartService } from "../dao/index.js";
 
 export const cartExists = async (req, res, next) => {
-  const cart = await Manager.getCartById(parseInt(req.params.cid));
+  const cart = await cartService.getCartById(req.params.cid);
   if (cart) {
     next();
   } else {

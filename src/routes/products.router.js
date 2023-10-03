@@ -1,17 +1,16 @@
 import { Router } from "express";
-import { ProductManager } from "../lib/ProductManager.js";
-import { productSchema } from "../models/productSchema.js";
+import { productJoiSchema } from "../dao/mongo/models/product.model.js";
 import { uploader } from "../middleware/uploader.js";
 import { __dirname } from "../utils.js";
 import { hasProductValues } from "../middleware/hasProductValues.js";
+import { productService } from "../dao/index.js";
 
 const router = Router();
-const Manager = new ProductManager(`${__dirname}/data/products.json`);
 
 router.get("/", async (req, res) => {
   const { limit } = req.query;
   try {
-    const products = await Manager.getProducts(parseInt(limit));
+    const products = await productService.getProducts(parseInt(limit));
     if (products) {
       res.status(200).json({ products: products });
     } else {
@@ -24,32 +23,32 @@ router.get("/", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   try {
-    const product = await Manager.getProductById(parseInt(req.params.id));
+    const product = await productService.getProductById(req.params.id);
     res.status(200).json({ product: product });
   } catch (e) {
-    res.status(e.status).json({ message: "An error ocurred.", details: e.message });
+    res.status(404).json({ message: "Not found.", details: e.message });
   }
 });
 
 router.post("/", uploader.array("thumbnails"), async (req, res) => {
   try {
-    const { error } = productSchema.validate(req.body, { abortEarly: false });
+    const { error } = productJoiSchema.validate(req.body, { abortEarly: false });
     if (error) {
       res.status(400).json({ error: "Bad request", details: error.details.map((e) => e.message) });
     } else {
       const thumbnails = req.files?.map((file) => `/img/${file.filename}`);
-      const product = await Manager.addProduct({ ...req.body, thumbnails });
-      res.status(200).json({ message: "Product added", product });
+      const product = await productService.createProduct({ ...req.body, thumbnails });
+      res.status(200).json({ message: "Product added", payload: product });
     }
   } catch (e) {
-    res.status(e.status).json({ message: "An error ocurred.", details: e.message });
+    res.status(500).json({ message: "An error ocurred.", details: e.message });
   }
 });
 
 router.put("/:id", hasProductValues, uploader.array("thumbnails"), async (req, res) => {
   try {
     const thumbnails = req.files ? req.files?.map((file) => file.path) : [];
-    const updatedProduct = await Manager.updateProduct(parseInt(req.params.id), { ...req.body, thumbnails });
+    const updatedProduct = await productService.updateProduct(req.params.id, { ...req.body, thumbnails });
     if (updatedProduct) {
       res.status(200).json({ message: "Product updated", product: updatedProduct });
     } else {
@@ -62,14 +61,14 @@ router.put("/:id", hasProductValues, uploader.array("thumbnails"), async (req, r
 
 router.delete("/:id", async (req, res) => {
   try {
-    const deletedProduct = await Manager.deleteProduct(parseInt(req.params.id));
+    const deletedProduct = await productService.deleteProduct(req.params.id);
     if (deletedProduct) {
       res.status(200).json({ message: "Product deleted", product: deletedProduct });
     } else {
       res.status(404).json({ message: "Product not fonud.", details: "Invalid ID." });
     }
   } catch (e) {
-    res.status(e.status).json({ message: "An error ocurred.", details: e.message });
+    res.status(500).json({ message: "An error ocurred.", details: e.message });
   }
 });
 
