@@ -16,7 +16,17 @@ export class CartManagerMongo {
 
   async addProductToCart(id, product) {
     try {
-      const result = await this.model.findByIdAndUpdate(id, { $push: { products: product } }, { new: true });
+      const cart = await this.model.findById(id);
+      const existingProductIndex = cart.products.findIndex((p) => p.productId === product.productId);
+
+      if (existingProductIndex !== -1) {
+        cart.products[existingProductIndex].quantity = product.quantity;
+      } else {
+        cart.products.push(product);
+      }
+
+      const result = await this.model.findByIdAndUpdate(id, cart, { new: true });
+
       if (!result) {
         throw new Error("Couldn't add product to cart.");
       }
