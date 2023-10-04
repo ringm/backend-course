@@ -14,7 +14,7 @@ const productSchema = mongoose.Schema({
   },
 });
 
-const cartSchema = mongoose.Schema({
+const cartSchema = new mongoose.Schema({
   products: {
     type: [productSchema],
     default: [],
