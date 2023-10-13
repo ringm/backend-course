@@ -16,7 +16,11 @@ dotenv.config();
 const PORT = 8080;
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: ["https://coderhouse-ecommerce-front.vercel.app", "http://localhost:3000"], // Change this to the domain you want to allow
+  }),
+);
 
 const httpServer = app.listen(PORT, () => console.log("server running"));
 const socketServer = new Server(httpServer);
