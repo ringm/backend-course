@@ -54,4 +54,17 @@ router.post("/:cid/product/:pid", cartExists, productExists, async (req, res) =>
   }
 });
 
+router.put("/:cid", cartExists, async (req, res) => {
+  try {
+    const cart = await cartService.emptyCart(req.params.cid);
+    if (cart) {
+      res.status(200).json({ message: "Products deleted from cart", cart });
+    } else {
+      res.status(400).json({ error: "An error ocurred.", deatils: "Could not delete products from the cart." });
+    }
+  } catch (e) {
+    res.status(500).json({ message: "An error ocurred.", details: e.message });
+  }
+});
+
 export { router as cartsRouter };

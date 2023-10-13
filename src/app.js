@@ -2,6 +2,7 @@ import express from "express";
 import handlebars from "express-handlebars";
 import fs from "fs";
 import dotenv from "dotenv";
+import cors from "cors";
 import { connectToDatabase } from "./config/dbConnect.js";
 import { Server } from "socket.io";
 import { productsRouter } from "./routes/products.router.js";
@@ -14,6 +15,8 @@ dotenv.config();
 
 const PORT = 8080;
 const app = express();
+
+app.use(cors());
 
 const httpServer = app.listen(PORT, () => console.log("server running"));
 const socketServer = new Server(httpServer);

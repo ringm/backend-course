@@ -8,11 +8,11 @@ import { productService } from "../dao/index.js";
 const router = Router();
 
 router.get("/", async (req, res) => {
-  const { limit } = req.query;
   try {
-    const products = await productService.getProducts(parseInt(limit));
+    const products = await productService.getProducts(req.query);
     if (products) {
-      res.status(200).json({ products: products });
+      const { docs, ...rest } = products;
+      res.status(200).json({ status: "success", payload: docs, ...rest });
     } else {
       throw new Error("Could not connect to the database.");
     }

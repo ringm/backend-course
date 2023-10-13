@@ -35,10 +35,20 @@ export class ProductManagerMongo {
     }
   }
 
-  async getProducts(limit) {
+  async getProducts(params) {
     try {
-      const result = await this.model.find();
-      return result;
+      const { limit, page, sort, category } = params;
+
+      const results = await this.model.paginate(category ? { category: category } : {}, {
+        sort: {
+          price: sort ?? 1,
+        },
+        page: page ?? 1,
+        limit: limit ?? 10,
+        lean: true,
+      });
+
+      return results;
     } catch (e) {
       throw new Error("Couldn't retrieve products.");
     }
