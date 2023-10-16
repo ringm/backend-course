@@ -13,7 +13,12 @@ import { chatService } from "./dao/index.js";
 
 dotenv.config();
 
-const PORT = 8080;
+let port = process.env.PORT;
+
+if (port == null || port == "") {
+  port = 8080;
+}
+
 const app = express();
 
 app.use(
@@ -22,7 +27,7 @@ app.use(
   }),
 );
 
-const httpServer = app.listen(PORT, () => console.log("server running"));
+const httpServer = app.listen(port, () => console.log("server running"));
 const socketServer = new Server(httpServer);
 
 const hbs = handlebars.create();
