@@ -1,4 +1,4 @@
-import { ProductManagerMongo } from "./mongo/productManagerMongo.js";
+import { ProductManagerMongo } from `${__dirname}/mongo/productManagerMongo.js`;
 import { ChatManagerMongo } from "./mongo/ChatManagerMongo.js";
 import { CartManagerMongo } from "./mongo/CartManagerMongo.js";
 
