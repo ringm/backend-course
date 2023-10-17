@@ -9,7 +9,8 @@
     "watch:css": "npx tailwindcss build -i src/public/css/tailwindstyles.css -o src/public/css/styles.css --watch"
   },
   "engines": {
-    "node": "18.x"
+    "node": "18.x",
+    "npm": "9.x"
   },
   "repository": {
     "type": "git",
