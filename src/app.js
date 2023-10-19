@@ -33,7 +33,7 @@ const hbs = handlebars.create();
 app.use(
   cors({
     credentials: true,
-    origin: ["https://coderhouse-ecommerce-front.vercel.app", "http://localhost:3000"], // Change this to the domain you want to allow
+    origin: ["https://coderhouse-ecommerce-front.vercel.app", "http://localhost:3000"],
   }),
 );
 
@@ -48,7 +48,7 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: true },
+    cookie: { secure: true, httpOnly: true, sameSite: "none" },
   }),
 );
 
