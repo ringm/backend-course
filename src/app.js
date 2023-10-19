@@ -32,9 +32,13 @@ const hbs = handlebars.create();
 
 app.use(
   cors({
-    methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
+    methods: ["POST", "PUT", "GET", "DELETE", "OPTIONS", "HEAD"],
     credentials: true,
-    origin: ["https://coderhouse-ecommerce-front.vercel.app", "http://localhost:3000"],
+    origin: [
+      "https://coderhouse-ecommerce-front.vercel.app",
+      "https://coderhouse-ecommerce-front-98dde1dc6257.herokuapp.com",
+      "http://localhost:3000",
+    ],
   }),
 );
 
