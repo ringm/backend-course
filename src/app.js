@@ -32,6 +32,7 @@ const hbs = handlebars.create();
 
 app.use(
   cors({
+    methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
     credentials: true,
     origin: ["https://coderhouse-ecommerce-front.vercel.app", "http://localhost:3000"],
   }),
@@ -48,7 +49,8 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: true, httpOnly: true, sameSite: "none" },
+    cookie: {},
+    // cookie: { secure: true, httpOnly: true, sameSite: "none" },
   }),
 );
 
