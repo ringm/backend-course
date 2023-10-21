@@ -9,8 +9,8 @@ export class UserManagerMongo {
     try {
       const user = await this.model.findOne({ email });
       if (user) {
-        const { username, email } = user;
-        return { username, email };
+        const { username, email, isAdmin } = user;
+        return { username, email, isAdmin };
       } else {
         throw new Error("User not found.");
       }
