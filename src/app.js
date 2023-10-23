@@ -55,7 +55,7 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: isDEV
+    cookie: !isDEV
       ? {}
       : { secure: true, sameSite: "none", httpOnly: true, domain: "https://coderhouse-ecommerce-front.vercel.app" },
   }),
