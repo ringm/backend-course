@@ -35,6 +35,7 @@ app.use(
   cors({
     methods: ["POST", "PUT", "GET", "DELETE", "OPTIONS", "HEAD"],
     credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization", "Origin", "X-Requested-With", "Accept"],
     origin: [
       "https://coderhouse-ecommerce-front.vercel.app",
       "https://coderhouse-ecommerce-front-98dde1dc6257.herokuapp.com",
