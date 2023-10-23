@@ -38,6 +38,7 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization", "Origin", "X-Requested-With", "Accept"],
     origin: [
       "https://coderhouse-ecommerce-front.vercel.app",
+      "https://coderhouse-ecommerce.ringm.com.ar",
       "https://coderhouse-ecommerce-front-98dde1dc6257.herokuapp.com",
       "http://localhost:3000",
     ],
@@ -55,9 +56,7 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: !isDEV
-      ? {}
-      : { secure: true, sameSite: "none", httpOnly: true, domain: "https://coderhouse-ecommerce-front.vercel.app" },
+    cookie: isDEV ? {} : { secure: true, sameSite: "none", httpOnly: true },
   }),
 );
 
