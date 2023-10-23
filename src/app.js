@@ -18,8 +18,9 @@ import { chatService } from "./dao/index.js";
 dotenv.config();
 
 let port = process.env.PORT;
+const isDEV = port == null || port == "" ? true : false;
 
-if (port == null || port == "") {
+if (isDEV) {
   port = 8080;
 }
 
@@ -53,8 +54,7 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: {},
-    // cookie: { secure: true, sameSite: "none", httpOnly: true },
+    cookie: isDEV ? {} : { secure: true, sameSite: "none", httpOnly: true },
   }),
 );
 
