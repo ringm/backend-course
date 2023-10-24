@@ -12,6 +12,10 @@ router.get("/", async (req, res) => {
     const products = await productService.getProducts(req.query);
     if (products) {
       const { docs, ...rest } = products;
+
+      const cookie = "myProdCookie=productCookie; HttpOnly; Secure; SameSite=None";
+      res.setHeader("Set-Cookie", cookie);
+
       res.status(200).json({ status: "success", payload: docs, ...rest });
     } else {
       throw new Error("Could not connect to the database.");

@@ -24,6 +24,10 @@ router.post("/login", async (req, res) => {
       const { username, email, isAdmin } = user;
       req.session.email = user.email;
       req.session.isAdmin = user.isAdmin;
+      // Create a cookie string
+      const cookie = "myCookie=myCookieValue; HttpOnly; Secure; SameSite=None; Path=/";
+      // Set the 'set-cookie' header in the response
+      res.setHeader("Set-Cookie", cookie);
       res.status(200).json({ status: "success", message: "Log in successfull", user: { username, email, isAdmin } });
     } else {
       throw new Error("Invalid credentials.");
