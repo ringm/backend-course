@@ -13,7 +13,7 @@ router.get("/", async (req, res) => {
     if (products) {
       const { docs, ...rest } = products;
 
-      const cookie = "myProdCookie=productCookie; HttpOnly; Secure; SameSite=None";
+      const cookie = "myProdCookie=productCookie; HttpOnly; Secure; SameSite=None; Path=/";
       res.setHeader("Set-Cookie", cookie);
 
       res.status(200).json({ status: "success", payload: docs, ...rest });

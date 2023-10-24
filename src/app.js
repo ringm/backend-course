@@ -57,7 +57,7 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: isDEV ? {} : { secure: true, sameSite: "none", domain: ".ringm.com.ar" },
+    cookie: isDEV ? {} : { secure: true, sameSite: "none", httpOnly: true, path: "/" },
   }),
 );
 
