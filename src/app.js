@@ -37,6 +37,7 @@ app.use(
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization", "Origin", "X-Requested-With", "Accept"],
     origin: [
+      "https://ringm.com.ar",
       "https://coderhouse-ecommerce-front.vercel.app",
       "https://coderhouse-ecommerce.ringm.com.ar",
       "https://coderhouse-ecommerce-front-98dde1dc6257.herokuapp.com",
