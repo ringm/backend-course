@@ -1,40 +1,32 @@
 import { Router } from "express";
 import { userService } from "../dao/index.js";
+import passport from "passport";
 
 const router = new Router();
 
-router.post("/signup", async (req, res) => {
-  try {
-    const newUser = await userService.signUpUser(req.body);
-    if (newUser) {
-      const { username, email } = newUser;
-      res.status(200).json({ status: "success", message: "User created successfully", user: { username, email } });
-    } else {
-      throw new Error("Couldn't create user.");
-    }
-  } catch (e) {
-    res.status(500).json({ message: "An error ocurred", details: e.message });
-  }
+router.post("/signup", passport.authenticate("register", { failureRedirect: "/signup-failed" }), async (req, res) => {
+  res.status(200).json({ status: "success", message: "User created successfully" });
 });
 
-router.post("/login", async (req, res) => {
-  try {
-    const user = await userService.logInUser(req.body);
-    if (user) {
-      const { username, email, isAdmin } = user;
-      req.session.email = user.email;
-      req.session.isAdmin = user.isAdmin;
+router.get("/signupFailed", async (req, res) => {
+  console.log("Sign Up Failed");
+  res.send({ error: "Failed" });
+});
 
-      const cookie = "myCookie=myCookieValue; HttpOnly; Secure; SameSite=None; Path=/";
-      res.setHeader("Set-Cookie", cookie);
-
-      res.status(200).json({ status: "success", message: "Log in successfull", user: { username, email, isAdmin } });
-    } else {
-      throw new Error("Invalid credentials.");
-    }
-  } catch (e) {
-    res.status(404).json({ message: "Log in failed", details: e.message });
+router.post("/login", passport.authenticate("login", { failureRedirect: "/fail-login" }), async (req, res) => {
+  if (!req.user) {
+    res.status(400).json({ status: "error", error: "Invalid credentials." });
+    req.session.user = {
+      username: req.user.username,
+      email: req.user.email,
+      isAdmin: req.user.isAdmin,
+    };
   }
+  res.status(200).json({ status: "success", message: "Log in successfull", user: req.user });
+});
+
+router.get("/fail-login", async (req, res) => {
+  res.send({ error: "Login failed" });
 });
 
 router.get("/logout", async (req, res) => {
@@ -50,8 +42,8 @@ router.get("/logout", async (req, res) => {
 
 router.get("/check-session", async (req, res) => {
   try {
-    if (req?.session?.email) {
-      const user = await userService.findUser(req.session.email);
+    if (req?.session?.passport) {
+      const user = await userService.findUserById(req.session.passport.user);
       if (user) {
         res.status(200).json({ session: true, user });
       } else {
@@ -63,6 +55,13 @@ router.get("/check-session", async (req, res) => {
   } catch (e) {
     res.status(404).json({ session: false, details: e.message });
   }
+});
+
+router.get("/github", passport.authenticate("github", { scope: ["user:email"] }), async (req, res) => {});
+
+router.get("/github-callback", passport.authenticate("github", { failureRedirect: "/login" }), async (req, res) => {
+  req.session.user = req.user;
+  res.status(200).redirect("http://localhost:3000/");
 });
 
 export { router as sessionsRouter };

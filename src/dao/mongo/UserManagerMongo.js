@@ -9,8 +9,20 @@ export class UserManagerMongo {
     try {
       const user = await this.model.findOne({ email });
       if (user) {
-        const { username, email, isAdmin } = user;
-        return { username, email, isAdmin };
+        return user;
+      } else {
+        throw new Error("User not found.");
+      }
+    } catch (e) {
+      console.log(e.message);
+    }
+  }
+
+  async findUserById(id) {
+    try {
+      const user = await this.model.findById(id);
+      if (user) {
+        return user;
       } else {
         throw new Error("User not found.");
       }

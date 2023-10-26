@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import session from "express-session";
 import MongoStore from "connect-mongo";
+import passport from "passport";
 import { connectToDatabase } from "./config/dbConnect.js";
 import { Server } from "socket.io";
 import { productsRouter } from "./routes/products.router.js";
@@ -14,6 +15,7 @@ import { viewsRouter } from "./routes/views.router.js";
 import { sessionsRouter } from "./routes/sessions.router.js";
 import { __dirname } from "./utils.js";
 import { chatService } from "./dao/index.js";
+import { initializePassport } from "./config/passport.config.js";
 
 dotenv.config();
 
@@ -62,6 +64,10 @@ app.use(
     cookie: isDEV ? {} : { secure: true, sameSite: "none", httpOnly: true, path: "/" },
   }),
 );
+
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
