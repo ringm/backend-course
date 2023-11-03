@@ -1,4 +1,6 @@
 import { userModel } from "./models/user.model.js";
+import { isValidPassword } from "../../utils.js";
+import jwt from "jsonwebtoken";
 
 export class UserManagerMongo {
   constructor() {
@@ -43,18 +45,33 @@ export class UserManagerMongo {
   async logInUser(user) {
     try {
       const dbUser = await this.model.findOne({ email: user.email });
-
       if (!dbUser) {
         throw new Error("User not found.");
       }
 
-      if (dbUser.password !== user.password) {
-        throw new Error("Invalid password.");
-      } else {
+      if (isValidPassword(dbUser, user.password)) {
         return dbUser;
+      } else {
+        throw new Error("Invalid password.");
       }
     } catch (e) {
       console.log(e.message);
     }
+  }
+
+  generateToken(user) {
+    const token = jwt.sign(
+      {
+        _id: user._id,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        cart: user.cart,
+        role: user.role,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "24h" },
+    );
+    return token;
   }
 }

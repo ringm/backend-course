@@ -1,4 +1,5 @@
 import { cartModel } from "./models/cart.model.js";
+import mongoose from "mongoose";
 
 export class CartManagerMongo {
   constructor() {
@@ -58,12 +59,61 @@ export class CartManagerMongo {
 
   async getCartById(cid) {
     try {
-      const result = await this.model.findById(cid);
-      return result;
+      const cart = await this.model.aggregate([
+        {
+          $match: { _id: new mongoose.Types.ObjectId(cid) },
+        },
+        {
+          $unwind: "$products",
+        },
+        {
+          $lookup: {
+            from: "products",
+            localField: "products.productId",
+            foreignField: "_id",
+            as: "productDetails",
+          },
+        },
+        {
+          $unwind: "$productDetails",
+        },
+        {
+          $addFields: {
+            "productDetails.quantity": "$products.quantity",
+          },
+        },
+        {
+          $group: {
+            _id: "$_id",
+            products: { $push: "$productDetails" },
+            totalQuantity: { $sum: "$products.quantity" },
+            totalPrice: {
+              $sum: {
+                $multiply: ["$products.quantity", "$productDetails.price"],
+              },
+            },
+          },
+        },
+      ]);
+
+      if (cart.length === 0) {
+        throw new Error("Cart not found.");
+      }
+
+      return cart;
     } catch (e) {
-      throw new Error("Cart not found.");
+      throw e; // Rethrow any errors
     }
   }
+
+  // async getCartById(cid) {
+  //   try {
+  //     const result = await this.model.findById(cid);
+  //     return result;
+  //   } catch (e) {
+  //     throw new Error("Cart not found.");
+  //   }
+  // }
 
   async emptyCart(cid) {
     try {
