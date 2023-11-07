@@ -35,8 +35,22 @@ app.use(
   cors({
     methods: ["POST", "PUT", "GET", "DELETE", "OPTIONS", "HEAD"],
     credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization", "Origin", "X-Requested-With", "Accept"],
-    origin: ["https://coderhouse-ecommerce.ringm.com.ar", "http://localhost:3000"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "Origin",
+      "X-Requested-With",
+      "Accept",
+      "Access-Control-Allow-Origin",
+    ],
+    origin: [
+      "https://ringm.com.ar",
+      "https://coderhouse-ecommerce.ringm.com.ar",
+      "https://coderhouse-ecommerce-front-ringm.vercel.app",
+      "https://coderhouse-ecommerce-front.vercel.app",
+      "https://coderhouse-ecommerce-front-git-main-ringm.vercel.app",
+      "http://localhost:3000",
+    ],
   }),
 );
 
