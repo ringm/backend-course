@@ -24,7 +24,10 @@ router.post("/login", async (req, res) => {
       const token = userService.generateToken(user);
       res
         .status(200)
-        .cookie(process.env.TOKEN_COOKIE_NAME, token)
+        .cookie(process.env.TOKEN_COOKIE_NAME, token, {
+          path: "/",
+          domain: "coderhouse-ecommerce-backend.ringm.com.ar",
+        })
         .json({ status: "success", message: "Log in successfull" });
     } else {
       res.status(401).json({ status: "Unauthorized", message: "Invalid credentials." });
