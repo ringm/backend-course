@@ -64,7 +64,10 @@ export class CartManagerMongo {
           $match: { _id: new mongoose.Types.ObjectId(cid) },
         },
         {
-          $unwind: "$products",
+          $unwind: {
+            path: "$products",
+            preserveNullAndEmptyArrays: true,
+          },
         },
         {
           $lookup: {
@@ -75,21 +78,40 @@ export class CartManagerMongo {
           },
         },
         {
-          $unwind: "$productDetails",
+          $unwind: {
+            path: "$productDetails",
+            preserveNullAndEmptyArrays: true,
+          },
         },
         {
           $addFields: {
-            "productDetails.quantity": "$products.quantity",
+            "productDetails.quantity": {
+              $ifNull: ["$products.quantity", 0],
+            },
           },
         },
         {
           $group: {
             _id: "$_id",
             products: { $push: "$productDetails" },
-            totalQuantity: { $sum: "$products.quantity" },
+            totalQuantity: { $sum: { $ifNull: ["$products.quantity", 0] } },
             totalPrice: {
               $sum: {
-                $multiply: ["$products.quantity", "$productDetails.price"],
+                $multiply: [{ $ifNull: ["$products.quantity", 0] }, { $ifNull: ["$productDetails.price", 0] }],
+              },
+            },
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+            totalQuantity: 1,
+            totalPrice: 1,
+            products: {
+              $filter: {
+                input: "$products",
+                as: "product",
+                cond: { $ne: ["$$product.quantity", 0] },
               },
             },
           },
@@ -100,20 +122,11 @@ export class CartManagerMongo {
         throw new Error("Cart not found.");
       }
 
-      return cart;
+      return cart[0];
     } catch (e) {
       throw e; // Rethrow any errors
     }
   }
-
-  // async getCartById(cid) {
-  //   try {
-  //     const result = await this.model.findById(cid);
-  //     return result;
-  //   } catch (e) {
-  //     throw new Error("Cart not found.");
-  //   }
-  // }
 
   async emptyCart(cid) {
     try {

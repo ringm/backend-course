@@ -24,7 +24,7 @@ router.get("/:id", async (req, res) => {
   try {
     const cart = await cartService.getCartById(req.params.id);
     if (cart) {
-      res.status(200).json({ cart: cart });
+      res.status(200).send(cart);
     } else {
       res.status(404).json({ error: "Cart not found", details: "Invalid ID" });
     }
