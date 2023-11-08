@@ -56,11 +56,12 @@ router.post("/:cid/product/:pid", cartExists, productExists, async (req, res) =>
 
 router.put("/:cid", cartExists, async (req, res) => {
   try {
-    const cart = await cartService.emptyCart(req.params.cid);
+    const products = req.body.products;
+    const cart = await cartService.updateCart(req.params.cid, products);
     if (cart) {
-      res.status(200).json({ message: "Products deleted from cart", cart });
+      res.status(200).json({ message: "Cart Updated", cart });
     } else {
-      res.status(400).json({ error: "An error ocurred.", deatils: "Could not delete products from the cart." });
+      res.status(400).json({ error: "An error ocurred.", deatils: "Could not update products from the cart." });
     }
   } catch (e) {
     res.status(500).json({ message: "An error ocurred.", details: e.message });

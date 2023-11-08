@@ -124,7 +124,16 @@ export class CartManagerMongo {
 
       return cart[0];
     } catch (e) {
-      throw e; // Rethrow any errors
+      throw e;
+    }
+  }
+
+  async updateCart(cid, products) {
+    try {
+      const result = await this.model.findByIdAndUpdate(cid, { products: products }, { new: true });
+      return result;
+    } catch (e) {
+      throw new Error(e.message);
     }
   }
 
