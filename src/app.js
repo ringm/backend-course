@@ -16,6 +16,7 @@ import handlebars from "express-handlebars";
 import fs from "fs";
 import session from "express-session";
 import MongoStore from "connect-mongo";
+import { v2 as cloudinary } from "cloudinary";
 
 dotenv.config();
 
@@ -85,6 +86,13 @@ app.use("/", viewsRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
 app.use("/api/users", usersRouter);
+
+cloudinary.config({
+  cloud_name: "dvun2e5kw",
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+  secure: true,
+});
 
 // socketServer.on("connection", (socket) => {
 //   console.log("nuevo cliente conectado");

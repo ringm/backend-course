@@ -4,6 +4,7 @@ import { uploader } from "../middleware/uploader.js";
 import { __dirname } from "../utils.js";
 import { hasProductValues } from "../middleware/hasProductValues.js";
 import { productService } from "../dao/index.js";
+import { v2 as cloudinary } from "cloudinary";
 
 const router = Router();
 
@@ -36,7 +37,22 @@ router.post("/", uploader.array("thumbnails"), async (req, res) => {
     if (error) {
       res.status(400).json({ error: "Bad request", details: error.details.map((e) => e.message) });
     } else {
-      const thumbnails = req.files?.map((file) => `/img/${file.filename}`);
+      let thumbnails = [];
+      if (req.files?.length > 0) {
+        thumbnails = await Promise.all(
+          req.files.map((file) => {
+            return new Promise((res, rej) => {
+              cloudinary.uploader.upload(file.path, { folder: req.body.name }, (err, result) => {
+                if (err) {
+                  console.error("Error uploading to Cloudinary:", err);
+                  rej("Upload failed");
+                }
+                res(result?.public_id);
+              });
+            });
+          }),
+        );
+      }
       const product = await productService.createProduct({ ...req.body, thumbnails });
       res.status(200).json({ message: "Product added", payload: product });
     }
@@ -47,7 +63,22 @@ router.post("/", uploader.array("thumbnails"), async (req, res) => {
 
 router.put("/:id", hasProductValues, uploader.array("thumbnails"), async (req, res) => {
   try {
-    const thumbnails = req.files ? req.files?.map((file) => file.path) : [];
+    let thumbnails = [];
+    if (req.files?.length > 0) {
+      thumbnails = await Promise.all(
+        req.files.map((file) => {
+          return new Promise((res, rej) => {
+            cloudinary.uploader.upload(file.path, { folder: req.body.name }, (err, result) => {
+              if (err) {
+                console.error("Error uploading to Cloudinary:", err);
+                rej("Upload failed");
+              }
+              res(result?.public_id);
+            });
+          });
+        }),
+      );
+    }
     const updatedProduct = await productService.updateProduct(req.params.id, { ...req.body, thumbnails });
     if (updatedProduct) {
       res.status(200).json({ message: "Product updated", product: updatedProduct });
