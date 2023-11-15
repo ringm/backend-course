@@ -1,13 +1,11 @@
 import passport from "passport";
 import local from "passport-local";
-//import GitHubStrategy from "passport-github2";
 import JwtStrategy from "passport-jwt";
-import { userService } from "../dao/index.js";
-import { cartService } from "../dao/index.js";
+import { userService } from "../services/index.js";
+import { cartService } from "../services/index.js";
 import { createHash } from "../utils.js";
 
 const LocalStrategy = local.Strategy;
-//const GitStrategy = GitHubStrategy.Strategy;
 const JWTStrategy = JwtStrategy.Strategy;
 const ExtractJWT = JwtStrategy.ExtractJwt;
 
@@ -62,37 +60,6 @@ export const initializePassport = () => {
       },
     ),
   );
-
-  // passport.use(
-  //   "github",
-  //   new GitStrategy(
-  //     {
-  //       clientID: process.env.GITHUB_CLIENT_ID,
-  //       clientSecret: process.env.GITHUB_CLIENT_SECRET,
-  //       callbackURL: "https://coderhouse-ecommerce-backend.ringm.com.ar/api/sessions/github-callback",
-  //     },
-  //     async (accessToken, refreshToken, profile, done) => {
-  //       try {
-  //         console.log(profile);
-  //         const user = await userService.findUser(profile._json.email);
-  //         if (!user) {
-  //           const newUser = {
-  //             username: profile.username,
-  //             email: profile._json.email,
-  //             password: "",
-  //             isAdmin: false,
-  //           };
-  //           const res = await userService.signUpUser(newUser);
-  //           done(null, res);
-  //         } else {
-  //           done(null, user);
-  //         }
-  //       } catch (e) {
-  //         return done(e);
-  //       }
-  //     },
-  //   ),
-  // );
 
   passport.serializeUser((user, done) => {
     done(null, user._id);

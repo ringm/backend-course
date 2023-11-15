@@ -1,5 +1,5 @@
-import { userModel } from "./models/user.model.js";
-import { isValidPassword } from "../../utils.js";
+import { userModel } from "../models/user.model.js";
+import { isValidPassword } from "../utils.js";
 import jwt from "jsonwebtoken";
 
 export class UserManagerMongo {

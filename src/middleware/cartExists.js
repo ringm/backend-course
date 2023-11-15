@@ -1,4 +1,4 @@
-import { cartService } from "../dao/index.js";
+import { cartService } from "../services/index.js";
 
 export const cartExists = async (req, res, next) => {
   const cart = await cartService.getCartById(req.params.cid);

@@ -1,4 +1,4 @@
-import { productService } from "../dao/index.js";
+import { productService } from "../services/index.js";
 
 export const productExists = async (req, res, next) => {
   const product = await productService.getProductById(req.params.pid);

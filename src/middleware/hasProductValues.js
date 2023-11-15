@@ -1,5 +1,5 @@
 import { areValuesValid } from "../helpers/validation.js";
-import { productJoiSchema } from "../dao/mongo/models/product.model.js";
+import { productJoiSchema } from "../models/product.model.js";
 
 export const hasProductValues = (req, res, next) => {
   const errors = areValuesValid(req.body, productJoiSchema);

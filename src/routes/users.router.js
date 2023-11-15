@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { userService } from "../dao/index.js";
+import { userService } from "../services/index.js";
 import passport from "passport";
 
 const router = new Router();
@@ -24,8 +24,8 @@ router.post("/login", async (req, res) => {
       const token = userService.generateToken(user);
       res
         .status(200)
-        //.cookie(process.env.TOKEN_COOKIE_NAME, token)
-        .cookie(process.env.TOKEN_COOKIE_NAME, token, { path: "/", domain: ".ringm.com.ar" })
+        .cookie(process.env.TOKEN_COOKIE_NAME, token)
+        //.cookie(process.env.TOKEN_COOKIE_NAME, token, { path: "/", domain: ".ringm.com.ar" })
         .json({ status: "success", message: "Log in successfull" });
     } else {
       res.status(401).json({ status: "Unauthorized", message: "Invalid credentials." });

@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { productInCartJoiSchema } from "../dao/mongo/models/cart.model.js";
+import { productInCartJoiSchema } from "../models/cart.model.js";
 import { __dirname } from "../utils.js";
 import { cartExists } from "../middleware/cartExists.js";
 import { productExists } from "../middleware/productExists.js";
-import { cartService } from "../dao/index.js";
+import { cartService } from "../services/index.js";
 
 const router = Router();
 

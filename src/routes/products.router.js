@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { productJoiSchema } from "../dao/mongo/models/product.model.js";
+import { productJoiSchema } from "../models/product.model.js";
 import { uploader } from "../middleware/uploader.js";
 import { __dirname } from "../utils.js";
 import { hasProductValues } from "../middleware/hasProductValues.js";
-import { productService } from "../dao/index.js";
+import { productService } from "../services/index.js";
 import { v2 as cloudinary } from "cloudinary";
 
 const router = Router();
