@@ -4,6 +4,13 @@ import passport from "passport";
 
 const router = new Router();
 
+let port = process.env.PORT;
+const isDEV = port == null || port == "" ? true : false;
+
+if (isDEV) {
+  port = 8080;
+}
+
 router.post(
   "/signup",
   passport.authenticate("register", { failureRedirect: "/api/users/signup-failed" }),
@@ -24,8 +31,7 @@ router.post("/login", async (req, res) => {
       const token = userService.generateToken(user);
       res
         .status(200)
-        .cookie(process.env.TOKEN_COOKIE_NAME, token)
-        //.cookie(process.env.TOKEN_COOKIE_NAME, token, { path: "/", domain: ".ringm.com.ar" })
+        .cookie(process.env.TOKEN_COOKIE_NAME, token, isDEV ? {} : { path: "/", domain: ".ringm.com.ar" })
         .json({ status: "success", message: "Log in successfull" });
     } else {
       res.status(401).json({ status: "Unauthorized", message: "Invalid credentials." });
@@ -47,16 +53,5 @@ router.get("/logout", (req, res) => {
 router.get("/current", passport.authenticate("jwt", { session: false }), (req, res) => {
   res.send(req.user);
 });
-
-// router.get("/github", passport.authenticate("github", { scope: ["user:email"] }), async (req, res) => {});
-
-// router.get(
-//   "/github-callback",
-//   passport.authenticate("github", { failureRedirect: "/api/sessions/login" }),
-//   async (req, res) => {
-//     req.session.user = req.user;
-//     res.status(200).redirect("https://coderhouse-ecommerce.ringm.com.ar");
-//   },
-// );
 
 export { router as usersRouter };
