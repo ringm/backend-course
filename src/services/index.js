@@ -1,9 +1,9 @@
-import { ProductManagerMongo } from "../controllers/ProductManagerMongo.js";
-import { ChatManagerMongo } from "../controllers/ChatManagerMongo.js";
-import { CartManagerMongo } from "../controllers/CartManagerMongo.js";
-import { UserManagerMongo } from "../controllers/UserManagerMongo.js";
+import { ProductController } from "../dao/mongo/controllers/product.controller.mongo.js";
+import { ChatController } from "../dao/mongo/controllers/chat.controller.mongo.js";
+import { CartController } from "../dao/mongo/controllers/cart.controller.mongo.js";
+import { UserController } from "../dao/mongo/controllers/user.controller.mongo.js";
 
-export const productService = new ProductManagerMongo();
-export const chatService = new ChatManagerMongo();
-export const cartService = new CartManagerMongo();
-export const userService = new UserManagerMongo();
+export const productService = new ProductController();
+export const chatService = new ChatController();
+export const cartService = new CartController();
+export const userService = new UserController();

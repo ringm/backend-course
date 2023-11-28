@@ -1,12 +1,12 @@
 import { cartModel } from "../models/cart.model.js";
 import mongoose from "mongoose";
 
-export class CartManagerMongo {
+export class CartController {
   constructor() {
     this.model = cartModel;
   }
 
-  async createCart() {
+  async create() {
     try {
       const result = await this.model.create({});
       return result;
@@ -15,49 +15,7 @@ export class CartManagerMongo {
     }
   }
 
-  async addProductToCart(cid, product) {
-    try {
-      const cart = await this.model.findById(cid);
-      const existingProductIndex = cart.products.findIndex((p) => p.productId._id.toString() === product.productId);
-
-      if (existingProductIndex !== -1) {
-        cart.products[existingProductIndex].quantity = product.quantity;
-      } else {
-        cart.products.push(product);
-      }
-
-      const result = await this.model.findByIdAndUpdate(cid, { products: cart.products }, { new: true });
-
-      if (!result) {
-        throw new Error("Couldn't add product to cart.");
-      }
-      return result;
-    } catch (e) {
-      throw new Error(e.message);
-    }
-  }
-
-  async deleteProduct(cid, pid) {
-    try {
-      const cart = await this.model.findById(cid);
-      const productIdx = cart.products.findIndex((p) => p.productId === pid);
-
-      const result = await this.model.findByIdAndUpdate(
-        cid,
-        { products: cart.products.splice(productIdx, 1) },
-        { new: true },
-      );
-
-      if (!result) {
-        throw new Error("Couldn't remove product from cart.");
-      }
-      return result;
-    } catch (e) {
-      throw new Error(e.message);
-    }
-  }
-
-  async getCartById(cid) {
+  async get(cid) {
     try {
       const cart = await this.model.aggregate([
         {
@@ -128,7 +86,7 @@ export class CartManagerMongo {
     }
   }
 
-  async updateCart(cid, products) {
+  async update(cid, products) {
     try {
       const result = await this.model.findByIdAndUpdate(cid, { products: products }, { new: true });
       return result;
@@ -137,9 +95,42 @@ export class CartManagerMongo {
     }
   }
 
-  async emptyCart(cid) {
+  async delete(cid, pid) {
     try {
-      const result = this.model.findByIdAndUpdate(cid, { products: [] }, { new: true });
+      const cart = await this.model.findById(cid);
+      const productIdx = cart.products.findIndex((p) => p.productId === pid);
+
+      const result = await this.model.findByIdAndUpdate(
+        cid,
+        { products: cart.products.splice(productIdx, 1) },
+        { new: true },
+      );
+
+      if (!result) {
+        throw new Error("Couldn't remove product from cart.");
+      }
+      return result;
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  }
+
+  async addProduct(cid, product) {
+    try {
+      const cart = await this.model.findById(cid);
+      const productIdx = cart.products.findIndex((p) => p.productId._id.toString() === product.productId);
+
+      if (productIdx !== -1) {
+        cart.products[productIdx].quantity = product.quantity;
+      } else {
+        cart.products.push(product);
+      }
+
+      const result = await this.model.findByIdAndUpdate(cid, { products: cart.products }, { new: true });
+
+      if (!result) {
+        throw new Error("Couldn't add product to cart.");
+      }
       return result;
     } catch (e) {
       throw new Error(e.message);

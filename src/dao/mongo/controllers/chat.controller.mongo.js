@@ -1,6 +1,6 @@
 import { messageModel } from "../models/chat.model.js";
 
-export class ChatManagerMongo {
+export class ChatController {
   constructor() {
     this.model = messageModel;
   }

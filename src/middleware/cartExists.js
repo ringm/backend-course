@@ -1,7 +1,7 @@
 import { cartService } from "../services/index.js";
 
 export const cartExists = async (req, res, next) => {
-  const cart = await cartService.getCartById(req.params.cid);
+  const cart = await cartService.get(req.params.cid);
   if (cart) {
     next();
   } else {

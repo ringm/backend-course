@@ -1,26 +1,27 @@
 import { userModel } from "../models/user.model.js";
-import { isValidPassword } from "../utils.js";
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-export class UserManagerMongo {
+export class UserController {
   constructor() {
     this.model = userModel;
+    this.validatePassword = (user, password) => bcrypt.compareSync(password, user.password);
   }
 
-  async findUser(email) {
+  async find(email) {
     try {
-      const user = await this.model.findOne({ email });
+      const user = await this.model.findOne({ email: email });
       if (user) {
         return user;
       } else {
-        throw new Error("User not found.");
+        console.log("User not found.");
       }
     } catch (e) {
       console.log(e.message);
     }
   }
 
-  async findUserById(id) {
+  async findById(id) {
     try {
       const user = await this.model.findById(id);
       if (user) {
@@ -33,7 +34,7 @@ export class UserManagerMongo {
     }
   }
 
-  async signUpUser(user) {
+  async signUp(user) {
     try {
       const res = await this.model.create(user);
       return res;
@@ -42,14 +43,14 @@ export class UserManagerMongo {
     }
   }
 
-  async logInUser(user) {
+  async logIn(user) {
     try {
       const dbUser = await this.model.findOne({ email: user.email });
       if (!dbUser) {
         throw new Error("User not found.");
       }
 
-      if (isValidPassword(dbUser, user.password)) {
+      if (this.validatePassword(dbUser, user.password)) {
         return dbUser;
       } else {
         throw new Error("Invalid password.");

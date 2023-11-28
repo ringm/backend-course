@@ -1,49 +1,11 @@
 import passport from "passport";
-import local from "passport-local";
 import JwtStrategy from "passport-jwt";
 import { userService } from "../services/index.js";
-import { cartService } from "../services/index.js";
-import { createHash } from "../utils.js";
 
-const LocalStrategy = local.Strategy;
 const JWTStrategy = JwtStrategy.Strategy;
 const ExtractJWT = JwtStrategy.ExtractJwt;
 
 export const initializePassport = () => {
-  passport.use(
-    "register",
-    new LocalStrategy(
-      {
-        passReqToCallback: true,
-        usernameField: "email",
-      },
-      async (req, username, password, done) => {
-        const { email, first_name, last_name, age, role } = req.body;
-        try {
-          const user = await userService.findUser(email);
-          if (user) {
-            console.log("User already exists.");
-            return done(null, false);
-          }
-          const cart = await cartService.createCart({});
-          const newUser = {
-            first_name,
-            last_name,
-            age,
-            email,
-            cart: cart._id,
-            password: createHash(password),
-            role,
-          };
-          const res = await userService.signUpUser(newUser);
-          return done(null, res);
-        } catch (e) {
-          return done("Error signing up user: " + error);
-        }
-      },
-    ),
-  );
-
   passport.use(
     "jwt",
     new JWTStrategy(
@@ -66,7 +28,7 @@ export const initializePassport = () => {
   });
 
   passport.deserializeUser(async (id, done) => {
-    const user = await userService.findUserById(id);
+    const user = await userService.findById(id);
     return done(null, user);
   });
 };
