@@ -2,7 +2,7 @@ import { Router } from "express";
 import { productInCartJoiSchema } from "../dao/mongo/models/cart.model.js";
 import { cartExists } from "../middleware/cartExists.js";
 import { productExists } from "../middleware/productExists.js";
-import { cartService } from "../services/index.js";
+import { cartService, ticketService } from "../services/index.js";
 import { productService } from "../services/index.js";
 import { isUser } from "../middleware/isUser.js";
 import passport from "passport";
@@ -85,12 +85,30 @@ router.post(
   async (req, res) => {
     try {
       const cart = await cartService.get(req.params.cid);
-      const prods = [...cart.products];
-      const filteredCart = prods.filter(async (product) => {
+      const ticketProducts = [];
+      const outOfStock = [];
+
+      for (const product of cart.products) {
         const p = await productService.getById(product._id);
-        return product.quantity <= p.stock;
-      });
-      res.status(200).json({ message: "cart", cart: filteredCart });
+        if (product.quantity <= p.stock) {
+          const { _id, stock } = p;
+          const newStock = stock - product.quantity;
+          await productService.update(_id, { stock: newStock });
+          ticketProducts.push({ ...product, stock: newStock });
+        } else {
+          outOfStock.push(product._id);
+        }
+      }
+
+      if (ticketProducts.length > 0) {
+        const amount = ticketProducts.reduce((acc, curr) => {
+          return acc + curr.price * curr.quantity;
+        }, 0);
+        const ticket = await ticketService.create(req.user.email, amount);
+        res.status(200).json({ message: "Purchase completed", ticket: ticket, outOfStockProducts: outOfStock });
+      } else {
+        res.status(400).json({ message: "Couldn't complete the order", products: cart.products });
+      }
     } catch (e) {
       res.status(500).json({ message: "An error ocurred.", details: e.message });
     }

@@ -1,15 +1,17 @@
-import { ticketModel } from "../models/ticket.model";
+import { ticketModel } from "../models/ticket.model.js";
+import { v4 as uuidv4 } from "uuid";
 
 export class TicketController {
-  constructur() {
+  constructor() {
     this.model = ticketModel;
   }
 
-  async create(cart, userId) {
+  async create(email, amount) {
     const ticket = {
       purchase_datetime: new Date(),
-      amount: cart.totalPrice,
-      purchaser: userId,
+      code: uuidv4(),
+      amount: amount,
+      purchaser: email,
     };
     try {
       const res = await this.model.create(ticket);
