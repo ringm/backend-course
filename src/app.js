@@ -10,6 +10,8 @@ import { usersRouter } from "./routes/users.router.js";
 import { __dirname } from "./utils.js";
 import { initializePassport } from "./config/passport.config.js";
 import { v2 as cloudinary } from "cloudinary";
+import { asyncMiddleware } from "./middleware/async.js";
+import { error } from "./middleware/error.js";
 
 dotenv.config();
 
@@ -63,6 +65,8 @@ connectToDatabase();
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
 app.use("/api/users", usersRouter);
+
+app.use(error);
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,

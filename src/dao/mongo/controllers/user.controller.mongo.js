@@ -11,13 +11,12 @@ export class UserController {
   async find(email) {
     try {
       const user = await this.model.findOne({ email: email });
-      if (user) {
-        return user;
-      } else {
-        console.log("User not found.");
+      if (!user) {
+        throw new Error("User not found.");
       }
+      return user;
     } catch (e) {
-      console.log(e.message);
+      throw new Error(e.message);
     }
   }
 
@@ -30,7 +29,7 @@ export class UserController {
         throw new Error("User not found.");
       }
     } catch (e) {
-      console.log(e.message);
+      throw new Error(e.message);
     }
   }
 
@@ -39,7 +38,7 @@ export class UserController {
       const res = await this.model.create(user);
       return res;
     } catch (e) {
-      throw new Error("Couldn't create user.");
+      throw new Error(e.message);
     }
   }
 
@@ -53,10 +52,10 @@ export class UserController {
       if (this.validatePassword(dbUser, user.password)) {
         return dbUser;
       } else {
-        throw new Error("Invalid password.");
+        throw new Error("Bad request: invalid credentials.");
       }
     } catch (e) {
-      console.log(e.message);
+      throw new Error(e.message);
     }
   }
 

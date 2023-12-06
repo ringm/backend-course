@@ -89,29 +89,12 @@ export class CartController {
   async update(cid, products) {
     try {
       const result = await this.model.findByIdAndUpdate(cid, { products: products }, { new: true });
-      return result;
-    } catch (e) {
-      throw new Error(e.message);
-    }
-  }
-
-  async delete(cid, pid) {
-    try {
-      const cart = await this.model.findById(cid);
-      const productIdx = cart.products.findIndex((p) => p.productId === pid);
-
-      const result = await this.model.findByIdAndUpdate(
-        cid,
-        { products: cart.products.splice(productIdx, 1) },
-        { new: true },
-      );
-
       if (!result) {
-        throw new Error("Couldn't remove product from cart.");
+        throw new Error("Cart not found.");
       }
       return result;
     } catch (e) {
-      throw new Error(e.message);
+      throw new Error("Couldn't update cart.");
     }
   }
 

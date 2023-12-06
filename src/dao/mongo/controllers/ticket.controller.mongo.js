@@ -7,17 +7,17 @@ export class TicketController {
   }
 
   async create(email, amount) {
-    const ticket = {
-      purchase_datetime: new Date(),
-      code: uuidv4(),
-      amount: amount,
-      purchaser: email,
-    };
     try {
+      const ticket = {
+        purchase_datetime: new Date(),
+        code: uuidv4(),
+        amount: amount,
+        purchaser: email,
+      };
       const res = await this.model.create(ticket);
       return res;
     } catch (e) {
-      console.log(e.message);
+      throw new Error(e.message);
     }
   }
 }
