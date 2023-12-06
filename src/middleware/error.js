@@ -3,6 +3,7 @@ export const error = (err, req, res, next) => {
   switch (true) {
     case message.includes("bad request"):
     case message.includes("required"):
+    case message.includes("must"):
       res.status(400);
       break;
     case message.includes("unauthorized"):

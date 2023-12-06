@@ -38,9 +38,12 @@ export class ProductController {
   async getById(id) {
     try {
       const result = await this.model.findById(id);
+      if (!result) {
+        throw new Error(`Product not found: ${id}`);
+      }
       return result;
     } catch (e) {
-      throw new Error("Product not found.");
+      throw new Error(e.message);
     }
   }
 
@@ -48,7 +51,7 @@ export class ProductController {
     try {
       const result = await this.model.findByIdAndUpdate(id, product, { new: true });
       if (!result) {
-        throw new Error("Product not found.");
+        throw new Error(`Product not found: ${id}`);
       }
       return result;
     } catch (e) {
@@ -60,7 +63,7 @@ export class ProductController {
     try {
       const result = await this.model.findByIdAndDelete(id);
       if (!result) {
-        throw new Error("Product not found.");
+        throw new Error(`Product not found: ${id}`);
       }
       return result;
     } catch (e) {
@@ -89,8 +92,7 @@ export class ProductController {
   async validate(product) {
     const { error } = await productJoiSchema.validateAsync(product, { abortEarly: false });
     if (error) {
-      throw new Error("que pesu");
-      //throw new Error(`Bad request: ${error.details.map((e) => e.message)}`);
+      throw new Error(`Bad request: ${error.details.map((e) => e.message)}`);
     }
   }
 

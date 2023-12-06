@@ -1,10 +1,10 @@
 import { productService } from "../services/index.js";
 
 export const productExists = async (req, res, next) => {
-  const product = await productService.getById(req.params.pid);
-  if (product) {
+  try {
+    await productService.getById(req.params.pid);
     next();
-  } else {
-    res.status(404).json({ error: "Not found", details: "Product not found." });
+  } catch (e) {
+    res.status(404).json({ error: "Not found", details: e.message });
   }
 };

@@ -1,4 +1,5 @@
 import { userModel } from "../models/user.model.js";
+import { userJoiSchema } from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -46,7 +47,7 @@ export class UserController {
     try {
       const dbUser = await this.model.findOne({ email: user.email });
       if (!dbUser) {
-        throw new Error("User not found.");
+        throw new Error("Bad request: invalid credentials.");
       }
 
       if (this.validatePassword(dbUser, user.password)) {
@@ -56,6 +57,13 @@ export class UserController {
       }
     } catch (e) {
       throw new Error(e.message);
+    }
+  }
+
+  async validate(user) {
+    const { error } = await userJoiSchema.validateAsync(user, { abortEarly: false });
+    if (error) {
+      throw new Error(`Bad request: ${error.details.map((e) => e.message)}`);
     }
   }
 

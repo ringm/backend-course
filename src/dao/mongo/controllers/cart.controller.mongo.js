@@ -1,4 +1,5 @@
-import { cartModel } from "../models/cart.model.js";
+import { cartJoiSchema, cartModel } from "../models/cart.model.js";
+import { productInCartJoiSchema } from "../models/cart.model.js";
 import mongoose from "mongoose";
 
 export class CartController {
@@ -77,7 +78,7 @@ export class CartController {
       ]);
 
       if (cart.length === 0) {
-        throw new Error("Cart not found.");
+        throw new Error(`Cart not found: ${cid}`);
       }
 
       return cart[0];
@@ -90,7 +91,7 @@ export class CartController {
     try {
       const result = await this.model.findByIdAndUpdate(cid, { products: products }, { new: true });
       if (!result) {
-        throw new Error("Cart not found.");
+        throw new Error(`Cart not found: ${cid}`);
       }
       return result;
     } catch (e) {
@@ -117,6 +118,20 @@ export class CartController {
       return result;
     } catch (e) {
       throw new Error(e.message);
+    }
+  }
+
+  async validateProduct(product) {
+    const { error } = await productInCartJoiSchema.validateAsync(product, { abortEarly: false });
+    if (error) {
+      throw new Error(`Bad request: ${error.details.map((e) => e.message)}`);
+    }
+  }
+
+  async validateProducts(products) {
+    const { error } = await cartJoiSchema.validateAsync({ products }, { abortEarly: false });
+    if (error) {
+      throw new Error(`Bad request: ${error.details.map((e) => e.message)}`);
     }
   }
 }

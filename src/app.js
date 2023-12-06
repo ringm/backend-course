@@ -3,6 +3,7 @@ import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import cors from "cors";
 import passport from "passport";
+import compression from "express-compression";
 import { connectToDatabase } from "./config/dbConnect.js";
 import { productsRouter } from "./routes/products.router.js";
 import { cartsRouter } from "./routes/carts.router.js";
@@ -49,6 +50,12 @@ app.use(
 );
 
 app.set("trust proxy", 1);
+
+app.use(
+  compression({
+    brotli: { enabled: true, zlib: {} },
+  }),
+);
 
 app.use(cookieParser());
 

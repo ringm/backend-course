@@ -1,10 +1,10 @@
 import { cartService } from "../services/index.js";
 
 export const cartExists = async (req, res, next) => {
-  const cart = await cartService.get(req.params.cid);
-  if (cart) {
+  try {
+    await cartService.get(req.params.cid);
     next();
-  } else {
-    res.status(404).json({ error: "Not found", details: "Cart not found." });
+  } catch (e) {
+    res.status(404).json({ error: "Not found", details: e.message });
   }
 };

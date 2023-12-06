@@ -30,6 +30,7 @@ cartSchema.pre("findOne", function (next) {
 export const cartModel = mongoose.model(cartCollection, cartSchema);
 
 export const productInCartJoiSchema = Joi.object({
+  productId: Joi.string().required(),
   quantity: Joi.number().min(1).required(),
 });
 

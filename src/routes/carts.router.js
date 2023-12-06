@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { cartExists } from "../middleware/cartExists.js";
 import { productExists } from "../middleware/productExists.js";
+import { productsExists } from "../middleware/productsExists.js";
 import { cartService, ticketService } from "../services/index.js";
 import { productService } from "../services/index.js";
 import { isUser } from "../middleware/isUser.js";
@@ -8,14 +9,6 @@ import { asyncMiddleware } from "../middleware/async.js";
 import passport from "passport";
 
 const router = Router();
-
-router.post(
-  "/",
-  asyncMiddleware(async (req, res) => {
-    const newCart = await cartService.create();
-    res.status(200).json({ message: "Cart added", cart: newCart });
-  }),
-);
 
 router.get(
   "/:id",
@@ -33,10 +26,12 @@ router.post(
   cartExists,
   productExists,
   asyncMiddleware(async (req, res) => {
-    const cart = await cartService.addProduct(req.params.cid, {
+    const product = {
       productId: req.params.pid,
-      quantity: req.body.quantity,
-    });
+      quantity: req.body?.quantity || 1,
+    };
+    await cartService.validateProduct(product);
+    const cart = await cartService.addProduct(req.params.cid, product);
     res.status(200).json({ message: "Product added to cart", cart });
   }),
 );
@@ -46,7 +41,9 @@ router.put(
   passport.authenticate("jwt", { session: false }),
   isUser,
   cartExists,
+  productsExists,
   asyncMiddleware(async (req, res) => {
+    await cartService.validateProducts(req.body.products);
     const products = req.body?.products || {};
     const cart = await cartService.update(req.params.cid, products);
     res.status(200).json({ message: "Cart Updated", cart });

@@ -3,7 +3,7 @@ import { userService, cartService } from "../services/index.js";
 import passport from "passport";
 import { createHash } from "../utils.js";
 import { asyncMiddleware } from "../middleware/async.js";
-import { userExists } from "../middleware/userExists.js";
+import { isUniqueEmail } from "../middleware/isUniqueEmail.js";
 
 const router = new Router();
 
@@ -16,19 +16,23 @@ if (isDEV) {
 
 router.post(
   "/signup",
-  userExists,
+  isUniqueEmail,
   asyncMiddleware(async (req, res) => {
+    await userService.validate(req.body);
     const { email, first_name, last_name, password, age, role } = req.body;
-    const cart = await cartService.create({});
     const newUser = {
       first_name,
       last_name,
       age,
       email,
-      cart: cart._id,
+      cart: null,
       password: createHash(password),
       role,
     };
+    if (role === "user") {
+      const cart = await cartService.create({});
+      newUser.cart = cart._id;
+    }
     await userService.signUp(newUser);
     res.status(200).json({ status: "success", message: "User created successfully" });
   }),
