@@ -1,5 +1,8 @@
+import { prodLogger, devLogger } from "../helpers/logger.js";
+
 export const error = (err, req, res, next) => {
   const message = err.message.toLowerCase();
+  const env = process.env.NODE_ENV || "development";
   switch (true) {
     case message.includes("bad request"):
     case message.includes("required"):
@@ -17,6 +20,11 @@ export const error = (err, req, res, next) => {
       break;
     default:
       res.status(500);
+  }
+  if (env === "development") {
+    devLogger.error(err.message);
+  } else {
+    prodLogger.error(err.message);
   }
   res.send(err.message);
 };
