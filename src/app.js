@@ -8,10 +8,10 @@ import { connectToDatabase } from "./config/dbConnect.js";
 import { productsRouter } from "./routes/products.router.js";
 import { cartsRouter } from "./routes/carts.router.js";
 import { usersRouter } from "./routes/users.router.js";
+import { loggerRouter } from "./routes/logger.router.js";
 import { __dirname } from "./utils.js";
 import { initializePassport } from "./config/passport.config.js";
 import { v2 as cloudinary } from "cloudinary";
-import { asyncMiddleware } from "./middleware/async.js";
 import { error } from "./middleware/error.js";
 
 dotenv.config();
@@ -72,6 +72,7 @@ connectToDatabase();
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
 app.use("/api/users", usersRouter);
+app.use("/api/logger", loggerRouter);
 
 app.use(error);
 
