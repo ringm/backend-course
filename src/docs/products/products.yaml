@@ -1,0 +1,177 @@
+openapi: 3.0.0
+info:
+  title: Products API
+  version: 1.0.0
+paths:
+  /api/products:
+    get:
+      summary: Get a list of products
+      tags:
+        - products
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                status: success
+                payload:
+                  - id: 1
+                    name: Product1
+                    description: Sample description
+                    code: ABC123
+                    price: 29.99
+                    category: Electronics
+                    status: true
+                    stock: 10
+                    thumbnails:
+                      - thumbnail_url_1.jpg
+                      - thumbnail_url_2.jpg
+                  - id: 2
+                    name: Product2
+                    description: Another product description
+                    code: XYZ789
+                    price: 49.99
+                    category: Clothing
+                    status: true
+                    stock: 20
+                    thumbnails:
+                      - thumbnail_url_3.jpg
+    post:
+      summary: Create a new product
+      tags:
+        - products
+      security:
+        - jwtAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              name: NewProduct
+              description: New product description
+              code: NEW123
+              price: 39.99
+              category: Furniture
+              status: true
+              stock: 15
+      responses:
+        '200':
+          description: Product added successfully
+          content:
+            application/json:
+              example:
+                message: Product added
+                payload:
+                  id: 3
+                  name: NewProduct
+                  description: New product description
+                  code: NEW123
+                  price: 39.99
+                  category: Furniture
+                  status: true
+                  stock: 15
+  /api/products/{id}:
+    get:
+      summary: Get product by ID
+      tags:
+        - products
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the product
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                product:
+                  id: 1
+                  name: Product1
+                  description: Sample description
+                  code: ABC123
+                  price: 29.99
+                  category: Electronics
+                  status: true
+                  stock: 10
+                  thumbnails:
+                    - thumbnail_url_1.jpg
+                    - thumbnail_url_2.jpg
+    put:
+      summary: Update product by ID
+      tags:
+        - products
+      security:
+        - jwtAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              name: UpdatedProduct
+              description: Updated product description
+              price: 45.99
+              category: Furniture
+              status: true
+              stock: 25
+      responses:
+        '200':
+          description: Product updated successfully
+          content:
+            application/json:
+              example:
+                message: Product updated
+                product:
+                  id: 1
+                  name: UpdatedProduct
+                  description: Updated product description
+                  code: ABC123
+                  price: 45.99
+                  category: Furniture
+                  status: true
+                  stock: 25
+    delete:
+      summary: Delete product by ID
+      tags:
+        - products
+      security:
+        - jwtAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the product
+      responses:
+        '200':
+          description: Product deleted successfully
+          content:
+            application/json:
+              example:
+                message: Product deleted
+                product:
+                  id: 1
+                  name: UpdatedProduct
+                  description: Updated product description
+                  code: ABC123
+                  price: 45.99
+                  category: Furniture
+                  status: true
+                  stock: 25
+components:
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer

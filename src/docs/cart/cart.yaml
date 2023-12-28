@@ -1,0 +1,157 @@
+openapi: 3.0.0
+info:
+  title: Cart API
+  version: 1.0.0
+paths:
+  /api/carts/{id}:
+    get:
+      summary: Get cart by ID
+      tags:
+        - cart
+      security:
+        - jwtAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the cart
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                _id: 1
+                products:
+                  - _id: 2
+                    productId: 3
+                    quantity: 2
+                createdAt: "2023-01-01T12:00:00Z"
+                updatedAt: "2023-01-01T12:30:00Z"
+    post:
+      summary: Add product to cart
+      tags:
+        - cart
+      security:
+        - jwtAuth: []
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the cart
+        - name: pid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the product to add
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              quantity: 2
+      responses:
+        '200':
+          description: Product added to cart successfully
+          content:
+            application/json:
+              example:
+                message: Product added to cart
+                cart:
+                  _id: 1
+                  products:
+                    - _id: 2
+                      productId: 3
+                      quantity: 2
+                  createdAt: "2023-01-01T12:00:00Z"
+                  updatedAt: "2023-01-01T12:30:00Z"
+    put:
+      summary: Update cart
+      tags:
+        - cart
+      security:
+        - jwtAuth: []
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the cart
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              products:
+                - productId: 3
+                  quantity: 3
+      responses:
+        '200':
+          description: Cart updated successfully
+          content:
+            application/json:
+              example:
+                message: Cart Updated
+                cart:
+                  _id: 1
+                  products:
+                    - productId: 3
+                      quantity: 3
+                  createdAt: "2023-01-01T12:00:00Z"
+                  updatedAt: "2023-01-01T12:45:00Z"
+  /api/carts/{cid}/purchase:
+    post:
+      summary: Complete purchase from cart
+      tags:
+        - cart
+      security:
+        - jwtAuth: []
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the cart
+      responses:
+        '200':
+          description: Purchase completed successfully
+          content:
+            application/json:
+              example:
+                message: Purchase completed
+                ticket:
+                  id: 4
+                  email: user@example.com
+                  amount: 89.97
+                  createdAt: "2023-01-01T13:00:00Z"
+                ticketProducts:
+                  - 2
+                  - 3
+                outOfStockProducts:
+                  - 1
+                  - 4
+        '400':
+          description: Couldn't complete the order
+          content:
+            application/json:
+              example:
+                message: Couldn't complete the order
+                products:
+                  - _id: 1
+                    productId: 3
+                    quantity: 2
+                  - _id: 4
+                    productId: 5
+                    quantity: 1
+components:
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
