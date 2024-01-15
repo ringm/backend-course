@@ -28,7 +28,7 @@ router.get(
   "/:id",
   asyncMiddleware(async (req, res) => {
     const product = await productService.getById(req.params.id);
-    res.status(200).json({ product: product });
+    res.status(200).json(product);
   }),
 );
 

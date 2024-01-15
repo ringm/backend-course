@@ -1,62 +1,46 @@
+import supertest from 'supertest';
 import { expect } from 'chai';
-import { usersRouter } from '../routes/users.router';
 
-describe('usersRouter', () => {
+const requester = supertest('http://localhost:8080/api');
 
-  describe('POST /signup', () => {
+describe('POST login', () => {
 
-    it('should create a new user and cart', async () => {
-      // mock request and response
-      const req = { body: { email: 'test@example.com', password: 'password123' } };
-      const res = { 
-        status: () => res,
-        json: () => {}
-      };
+  it('should login user', async () => {
+    const user = {
+      email: "martin@gmail.com",
+      password: "123456"
+    };
 
-      // spy on cartService.create
-      const cartService = {
-        create: sinon.stub().resolves({ _id: 'cart123' })  
-      };
+    const { statusCode, _body } = await requester.post('/users/login').send(user);
 
-      // call route handler
-      await usersRouter.post('/signup', req, res);
+    expect(statusCode).to.be.equal(200);
+    expect(_body).to.have.property('message').to.be.equal('Log in successfull');
+  })
 
-      // assertions
-      expect(cartService.create).to.have.been.calledOnce;
-      expect(res.status).to.have.been.calledWith(200);
-      expect(res.json).to.have.been.calledOnce;
-    });
+  it('should return 400 when credentials are wrong', async () => {
+    const user = {
+      email: "martin@gmail.com",
+      password: "111"
+    };
 
-  });
+    const { statusCode } = await requester.post('/users/login').send(user);
 
-  describe('POST /login', () => {
-
-    it('should login user and set token cookie', async () => {
-      // mock request and response
-      const req = { body: { email: 'test@example.com', password: 'password123' } };
-      const res = { 
-        status: () => res,
-        cookie: () => res,
-        json: () => {}
-      };
-
-      // spy on userService.login
-      const userService = {
-        login: sinon.stub().resolves({ /* user */}),
-        generateToken: sinon.stub().returns('token123')  
-      };
-
-      // call route handler
-      await usersRouter.post('/login', req, res);
-
-      // assertions
-      expect(userService.login).to.have.been.calledOnce;
-      expect(userService.generateToken).to.have.been.calledOnce;
-      expect(res.status).to.have.been.calledWith(200);
-      expect(res.cookie).to.have.been.calledOnce;
-      expect(res.json).to.have.been.calledOnce;
-    });
-
-  });
-
+    expect(statusCode).to.be.equal(400);
+  })
 });
+
+describe('POST /signup', () => {
+  it('should return 400 when email is already registered', async () => {
+    const user = {
+      first_name: "martin",
+      last_name: "perez",
+      age: 18,
+      email: "martin.perez@gmail.com",
+      password: "123456",
+      role: "user"
+    }
+
+    const { statusCode } = await requester.post('/users/signup').send(user);
+    expect(statusCode).to.be.equal(400);
+  })
+})
