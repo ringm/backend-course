@@ -1,5 +1,6 @@
 import { userModel } from "../models/user.model.js";
 import { userJoiSchema } from "../models/user.model.js";
+import { v2 as cloudinary } from "cloudinary";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -65,6 +66,37 @@ export class UserController {
     if (error) {
       throw new Error(`Bad request: ${error.details.map((e) => e.message)}`);
     }
+  }
+
+  async update(id, user) {
+    try {
+      const result = await this.model.findByIdAndUpdate(id, user, { new: true });
+      if (!result) {
+        throw new Error("User not found.");
+      }
+      return result;
+    } catch (e) {
+      throw new Error("Couldn't update user.");
+    }
+  }
+
+  async uploadDocuments(documents, id) {
+    const docs = await Promise.all(
+      documents.map((file) => {
+        return new Promise((res, rej) => {
+          cloudinary.uploader.upload_stream(
+            { resource_type: 'raw', public_id: file.fieldname, folder: `documents/${id}`, overwrite: true }, (error, result) => {
+              if (error) {
+                console.error('Error uploading to Cloudinary:', error);
+                rej('Upload failed');
+              } else {
+                //console.log('Upload successful. Cloudinary response:', result);
+                res({name: file.fieldname, reference: result?.secure_url});
+              }
+            }).end(file.buffer);
+        })
+      }))
+    return docs;
   }
 
   generateToken(user) {

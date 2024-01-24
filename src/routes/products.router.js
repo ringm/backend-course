@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { asyncMiddleware } from "../middleware/async.js";
-import { uploader } from "../middleware/uploader.js";
+import { imagesUploader } from "../middleware/uploader.js";
 import { productService } from "../services/index.js";
 import { isAdmin } from "../middleware/isAdmin.js";
 import passport from "passport";
@@ -36,7 +36,7 @@ router.post(
   "/",
   passport.authenticate("jwt", { session: false }),
   isAdmin,
-  uploader.array("thumbnails"),
+  imagesUploader.array("thumbnails"),
   asyncMiddleware(async (req, res) => {
     await productService.validate(req.body);
     let thumbnails = [];
@@ -52,7 +52,7 @@ router.put(
   "/:id",
   passport.authenticate("jwt", { session: false }),
   isAdmin,
-  uploader.array("thumbnails"),
+  imagesUploader.array("thumbnails"),
   asyncMiddleware(async (req, res) => {
     let thumbnails = [];
     if (req.files?.length > 0) {

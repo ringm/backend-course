@@ -1,5 +1,9 @@
 import multer from "multer";
 
-export const uploader = multer({
-  dest: "images/",
+export const imagesUploader = multer({
+  storage: multer.memoryStorage(),
+});
+
+export const documentsUploader = multer({
+  storage: multer.memoryStorage(),
 });

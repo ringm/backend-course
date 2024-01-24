@@ -31,8 +31,35 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
+    enum: ["user", "admin", "premium"],
     default: "user",
   },
+  last_connection: {
+    type: Date,
+    required: true,
+    default: null
+  },
+  status: {
+    type: String,
+    required: true,
+    enum: ["pending", "incomplete", "complete"],
+    default: "pending"
+  },
+  documents: {
+    type: [
+      {
+        name: {
+          type: String,
+          required: true
+        },
+        reference: {
+          type: String,
+          required: true
+        }
+      }
+    ],
+    default: []
+  }
 });
 
 export const userModel = mongoose.model(userCollections, userSchema);
