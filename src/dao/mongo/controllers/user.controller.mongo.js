@@ -90,7 +90,6 @@ export class UserController {
                 console.error('Error uploading to Cloudinary:', error);
                 rej('Upload failed');
               } else {
-                //console.log('Upload successful. Cloudinary response:', result);
                 res({name: file.fieldname, reference: result?.secure_url});
               }
             }).end(file.buffer);
@@ -104,10 +103,8 @@ export class UserController {
       {
         _id: user._id,
         first_name: user.first_name,
-        last_name: user.last_name,
-        email: user.email,
-        cart: user.cart,
         role: user.role,
+        email: user.email,
       },
       process.env.JWT_SECRET,
       { expiresIn: "24h" },

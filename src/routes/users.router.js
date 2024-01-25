@@ -28,9 +28,9 @@ router.post(
       email,
       cart: null,
       password: createHash(password),
-      role,
+      role: role || 'user',
     };
-    if (role === "user") {
+    if (newUser.role === "user") {
       const cart = await cartService.create({});
       newUser.cart = cart._id;
     }
@@ -63,9 +63,21 @@ router.get("/logout", passport.authenticate("jwt", { session: false }), async (r
   res.send("logged out");
 });
 
-router.get("/current", passport.authenticate("jwt", { session: false }), (req, res) => {
-  res.send(req.user);
-});
+router.get("/current", passport.authenticate("jwt", { session: false }), asyncMiddleware(async (req, res) => {
+  const u = await userService.findById(req.user._id);
+  const user = {
+    _id: u._id,
+    first_name: u.first_name,
+    last_name: u.last_name,
+    email: u.email,
+    age: u.age,
+    role: u.role,
+    status: u.status,
+    cart: u.cart,
+    documents: u.documents,
+  }
+  res.send(user);
+}));
 
 router.post(
   '/:id/documents',
@@ -87,16 +99,30 @@ router.post(
   asyncMiddleware(async (req, res) => {
     const { id } = req.params;
     const documents = Object.keys(req.files).map(key => req.files[key][0]);
-    const docs = await userService.uploadDocuments(documents, req.params.id);
+
+    if(documents.length === 0) {
+      res.status(400).send({ message: 'No files were uploaded' });
+      return;
+    }
+
+    const newDocs = await userService.uploadDocuments(documents, req.params.id);
     const user = await userService.findById(id);
-    if(docs.length === 3) {
+
+    if(user.documents.length === 0) {
+      user.documents = newDocs;
+    } else {
+      const oldDocs = user.documents.filter(doc => !newDocs.find(d => d.name === doc.name));
+      user.documents = [ ...oldDocs, ...newDocs ];
+    }
+
+    if(user.documents.length === 3) {
       user.status = 'complete';
       user.role = 'premium';
     }
-    if(docs.length > 0 && docs.length < 3) {
+    if(user.documents.length > 0 && user.documents.length < 3) {
       user.status = 'incomplete';
     }
-    user.documents = docs;
+
     await userService.update(id, user);
     const token = userService.generateToken(user);
     res

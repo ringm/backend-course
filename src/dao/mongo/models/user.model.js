@@ -36,12 +36,10 @@ const userSchema = new mongoose.Schema({
   },
   last_connection: {
     type: Date,
-    required: true,
     default: null
   },
   status: {
     type: String,
-    required: true,
     enum: ["pending", "incomplete", "complete"],
     default: "pending"
   },
@@ -70,5 +68,4 @@ export const userJoiSchema = Joi.object({
   email: Joi.string().email().required(),
   age: Joi.number().min(18).required(),
   password: Joi.string().min(6).required(),
-  role: Joi.string().valid("user", "admin").required(),
 });

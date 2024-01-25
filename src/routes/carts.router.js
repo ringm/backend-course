@@ -4,7 +4,7 @@ import { productExists } from "../middleware/productExists.js";
 import { productsExists } from "../middleware/productsExists.js";
 import { cartService, ticketService } from "../services/index.js";
 import { productService } from "../services/index.js";
-import { isUser } from "../middleware/isUser.js";
+import { isPremiumUser } from "../middleware/isPremiumUser.js";
 import { asyncMiddleware } from "../middleware/async.js";
 import passport from "passport";
 
@@ -22,7 +22,7 @@ router.get(
 router.post(
   "/:cid/product/:pid",
   passport.authenticate("jwt", { session: false }),
-  isUser,
+  isPremiumUser,
   cartExists,
   productExists,
   asyncMiddleware(async (req, res) => {
@@ -39,7 +39,7 @@ router.post(
 router.put(
   "/:cid",
   passport.authenticate("jwt", { session: false }),
-  isUser,
+  isPremiumUser,
   cartExists,
   productsExists,
   asyncMiddleware(async (req, res) => {
@@ -53,7 +53,7 @@ router.put(
 router.post(
   "/:cid/purchase",
   passport.authenticate("jwt", { session: false }),
-  isUser,
+  isPremiumUser,
   cartExists,
   asyncMiddleware(async (req, res) => {
     const cart = await cartService.get(req.params.cid);
