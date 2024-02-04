@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import passport from "passport";
 import compression from "express-compression";
+import nodemailer from 'nodemailer';
 import { connectToDatabase } from "./config/dbConnect.js";
 import { productsRouter } from "./routes/products.router.js";
 import { cartsRouter } from "./routes/carts.router.js";
@@ -89,3 +90,12 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
   secure: true,
 });
+
+export const transport = nodemailer.createTransport({
+  service: 'gmail',
+  port: 587,
+  auth: {
+    user: process.env.NODEMAILER_USER,
+    pass: process.env.NODEMAILER_PASS
+  }
+})

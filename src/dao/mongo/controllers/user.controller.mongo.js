@@ -1,6 +1,7 @@
 import { userModel } from "../models/user.model.js";
 import { userJoiSchema } from "../models/user.model.js";
 import { v2 as cloudinary } from "cloudinary";
+import { transport } from "../../../app.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -92,9 +93,24 @@ export class UserController {
   async delete(id) {
     try {
       const result = await this.model.findByIdAndDelete(id);
+      
       if (!result) {
         throw new Error(`User not found: ${id}`);
       }
+
+      await transport.sendMail({
+        from: 'Coder Ecommerce <ring.martin@gmail.com>',
+        to: result.email,
+        subject: 'Cuenta eliminada',
+        html: `
+          <div>
+            <h1>Su cuenta ha sido eliminada</h1>
+            <p>Si desea volver a registrarse, por favor vuelva a la página de registro.</p>
+          </div>
+        `,
+        attachments: []
+      })
+
       return result;
     } catch (e) {
       throw new Error("Couldn't delete user.");
@@ -106,13 +122,30 @@ export class UserController {
       const cutoffTime = new Date();
       cutoffTime.setHours(cutoffTime.getHours() - 48);
 
-      const result = await this.model.deleteMany({ last_connection: { $lt: cutoffTime } });
+      const inactiveUsers = await this.model.find({ last_connection: { $lt: cutoffTime } });
 
-      if (result.deletedCount === 0) {
-        throw new Error("No users to delete.");
+      if (inactiveUsers.length > 0) {
+
+        inactiveUsers.forEach(async (user) => {
+          await transport.sendMail({
+            from: 'Coder Ecommerce <ring.martin@gmail.com>',
+            to: user.email,
+            subject: 'Cuenta eliminada',
+            html: `
+              <div>
+                <h1>Su cuenta ha sido eliminada</h1>
+                <p>Si desea volver a registrarse, por favor vuelva a la página de registro.</p>
+              </div>
+            `,
+            attachments: []
+          })
+        })
+
+        const result = await this.model.deleteMany({ last_connection: { $lt: cutoffTime } });
+        return result
       }
 
-      return result.deletedCount;
+      throw new Error("No users to delete.");
 
     } catch (e) {
       throw new Error("Couldn't delete inactive users.");
