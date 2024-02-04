@@ -10,6 +10,15 @@ export class UserController {
     this.validatePassword = (user, password) => bcrypt.compareSync(password, user.password);
   }
 
+  async get() {
+    try {
+      const users = await this.model.find({});
+      return users;
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  }
+
   async find(email) {
     try {
       const user = await this.model.findOne({ email: email });
@@ -80,6 +89,36 @@ export class UserController {
     }
   }
 
+  async delete(id) {
+    try {
+      const result = await this.model.findByIdAndDelete(id);
+      if (!result) {
+        throw new Error(`User not found: ${id}`);
+      }
+      return result;
+    } catch (e) {
+      throw new Error("Couldn't delete user.");
+    }
+  }
+
+  async deleteInactive() {
+    try {
+      const cutoffTime = new Date();
+      cutoffTime.setHours(cutoffTime.getHours() - 48);
+
+      const result = await this.model.deleteMany({ last_connection: { $lt: cutoffTime } });
+
+      if (result.deletedCount === 0) {
+        throw new Error("No users to delete.");
+      }
+
+      return result.deletedCount;
+
+    } catch (e) {
+      throw new Error("Couldn't delete inactive users.");
+    }
+  }
+
   async uploadDocuments(documents, id) {
     const docs = await Promise.all(
       documents.map((file) => {
@@ -90,7 +129,7 @@ export class UserController {
                 console.error('Error uploading to Cloudinary:', error);
                 rej('Upload failed');
               } else {
-                res({name: file.fieldname, reference: result?.secure_url});
+                res({ name: file.fieldname, reference: result?.secure_url });
               }
             }).end(file.buffer);
         })

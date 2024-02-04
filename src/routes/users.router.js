@@ -5,6 +5,7 @@ import { createHash } from "../utils.js";
 import { documentsUploader } from "../middleware/uploader.js";
 import { asyncMiddleware } from "../middleware/async.js";
 import { isUniqueEmail } from "../middleware/isUniqueEmail.js";
+import { isAdmin } from "../middleware/isAdmin.js";
 
 const router = new Router();
 
@@ -14,6 +15,61 @@ const isDEV = port == null || port == "" ? true : false;
 if (isDEV) {
   port = 8080;
 }
+
+router.get(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  isAdmin,
+  asyncMiddleware(async (req, res) => {
+    const users = await userService.get();
+    res.status(200).json(users);
+  })
+);
+
+router.get(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  isAdmin,
+  asyncMiddleware(async (req, res) => {
+    const user = await userService.findById(req.params.id);
+    res.status(200).json(user);
+  })
+);
+
+router.put(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  isAdmin,
+  asyncMiddleware(async (req, res) => {
+    const updatedUser = await userService.update(
+      req.params.id,
+      req.body
+    );
+    res.status(200).json({ message: "User updated", user: updatedUser });
+  })
+);
+
+router.delete(
+  '/',
+  passport.authenticate("jwt", { session: false }),
+  isAdmin,
+  asyncMiddleware(async (req, res) => {
+    const deletedUsers = await userService.deleteInactive();
+    res.status(200).json({ message: "Users deleted", deletedUsers: deletedUsers });
+  })
+)
+
+router.delete(
+  '/:id',
+  passport.authenticate("jwt", { session: false }),
+  isAdmin,
+  asyncMiddleware(async (req, res) => {
+    const deletedUser = await userService.delete(
+      req.params.id
+    );
+    res.status(200).json({ message: "User deleted", user: deletedUser });
+  })
+);
 
 router.post(
   "/signup",
@@ -27,6 +83,7 @@ router.post(
       age,
       email,
       cart: null,
+      last_connection: new Date(),
       password: createHash(password),
       role: role || 'user',
     };
@@ -63,7 +120,7 @@ router.get("/logout", passport.authenticate("jwt", { session: false }), async (r
   res.send("logged out");
 });
 
-router.get("/current", passport.authenticate("jwt", { session: false }), asyncMiddleware(async (req, res) => {
+router.get("/current/me", passport.authenticate("jwt", { session: false }), asyncMiddleware(async (req, res) => {
   const u = await userService.findById(req.user._id);
   const user = {
     _id: u._id,
@@ -100,7 +157,7 @@ router.post(
     const { id } = req.params;
     const documents = Object.keys(req.files).map(key => req.files[key][0]);
 
-    if(documents.length === 0) {
+    if (documents.length === 0) {
       res.status(400).send({ message: 'No files were uploaded' });
       return;
     }
@@ -108,18 +165,18 @@ router.post(
     const newDocs = await userService.uploadDocuments(documents, req.params.id);
     const user = await userService.findById(id);
 
-    if(user.documents.length === 0) {
+    if (user.documents.length === 0) {
       user.documents = newDocs;
     } else {
       const oldDocs = user.documents.filter(doc => !newDocs.find(d => d.name === doc.name));
-      user.documents = [ ...oldDocs, ...newDocs ];
+      user.documents = [...oldDocs, ...newDocs];
     }
 
-    if(user.documents.length === 3) {
+    if (user.documents.length === 3) {
       user.status = 'complete';
       user.role = 'premium';
     }
-    if(user.documents.length > 0 && user.documents.length < 3) {
+    if (user.documents.length > 0 && user.documents.length < 3) {
       user.status = 'incomplete';
     }
 

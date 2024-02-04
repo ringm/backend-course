@@ -58,7 +58,10 @@ router.put(
     if (req.files?.length > 0) {
       thumbnails = await productService.uploadImages(req.files);
     }
-    const updatedProduct = await productService.update(req.params.id, { ...req.body, thumbnails });
+    const updatedProduct = await productService.update(
+      req.params.id,
+      thumbnails.length > 0 ? { ...req.body, thumbnails } : { ...req.body }
+    );
     res.status(200).json({ message: "Product updated", product: updatedProduct });
   }),
 );

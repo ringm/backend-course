@@ -37,7 +37,7 @@ export class ProductController {
 
   async getById(id) {
     try {
-      if(id.length !== 24) {
+      if(id.toString().length !== 24) {
         throw new Error("Bad request: invalid id");
       }
       const result = await this.model.findById(id);
@@ -52,7 +52,7 @@ export class ProductController {
 
   async update(id, product) {
     try {
-      if(id.length !== 24) {
+      if(id.toString().length !== 24) {
         throw new Error("Bad request: invalid id");
       }
       const result = await this.model.findByIdAndUpdate(id, product, { new: true });
@@ -67,7 +67,7 @@ export class ProductController {
 
   async delete(id) {
     try {
-      if(id.length !== 24) {
+      if(id.toString().length !== 24) {
         throw new Error("Bad request: invalid id");
       }
       const result = await this.model.findByIdAndDelete(id);
