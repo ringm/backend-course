@@ -116,7 +116,7 @@ router.get("/logout", passport.authenticate("jwt", { session: false }), async (r
   const user = req.user;
   user.last_connection = new Date();
   await userService.update(user._id, user);
-  res.clearCookie(process.env.TOKEN_COOKIE_NAME, { httpOnly: true });
+  res.clearCookie(process.env.TOKEN_COOKIE_NAME, isDEV ? {} : { httpOnly: true, path: '/', domain: ".ringm.com.ar" });
   res.send("logged out");
 });
 

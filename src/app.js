@@ -47,9 +47,6 @@ app.use(
     origin: [
       "https://ringm.com.ar",
       "https://coderhouse-ecommerce.ringm.com.ar",
-      "https://coderhouse-ecommerce-front-ringm.vercel.app",
-      "https://coderhouse-ecommerce-front.vercel.app",
-      "https://coderhouse-ecommerce-front-git-main-ringm.vercel.app",
       "http://localhost:3000",
     ],
   }),
