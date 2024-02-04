@@ -10,7 +10,6 @@ import { productsRouter } from "./routes/products.router.js";
 import { cartsRouter } from "./routes/carts.router.js";
 import { usersRouter } from "./routes/users.router.js";
 import { loggerRouter } from "./routes/logger.router.js";
-import { mailRouter } from "./routes/mail.router.js";
 import { __dirname } from "./utils.js";
 import { initializePassport } from "./config/passport.config.js";
 import { v2 as cloudinary } from "cloudinary";
@@ -80,7 +79,6 @@ app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/logger", loggerRouter);
-app.use("/api/mail", mailRouter);
 
 app.use(error);
 
