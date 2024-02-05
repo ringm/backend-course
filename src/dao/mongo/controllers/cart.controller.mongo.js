@@ -99,6 +99,15 @@ export class CartController {
     }
   }
 
+  async deleteProductFromAllCarts(productId) {
+    try {
+      const result = await this.model.updateMany({ "products.productId": productId }, { $pull: { products: { productId: productId } } });
+      return result;
+    } catch (e) {
+      throw new Error("Couldn't delete product from all carts.");
+    }
+  }
+
   async addProduct(cid, product) {
     try {
       const cart = await this.model.findById(cid);

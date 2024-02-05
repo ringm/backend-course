@@ -2,6 +2,7 @@ import { Router } from "express";
 import { asyncMiddleware } from "../middleware/async.js";
 import { imagesUploader } from "../middleware/uploader.js";
 import { productService } from "../services/index.js";
+import { cartService } from "../services/index.js";
 import { isAdmin } from "../middleware/isAdmin.js";
 import passport from "passport";
 
@@ -71,6 +72,7 @@ router.delete(
   passport.authenticate("jwt", { session: false }),
   isAdmin,
   asyncMiddleware(async (req, res) => {
+    await cartService.deleteProductFromAllCarts(req.params.id);
     const deletedProduct = await productService.delete(req.params.id);
     res.status(200).json({ message: "Product deleted", product: deletedProduct });
   }),

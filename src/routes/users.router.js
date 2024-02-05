@@ -112,14 +112,6 @@ router.post(
   }),
 );
 
-router.get("/logout", passport.authenticate("jwt", { session: false }), async (req, res) => {
-  const user = req.user;
-  user.last_connection = new Date();
-  await userService.update(user._id, user);
-  res.clearCookie(process.env.TOKEN_COOKIE_NAME, isDEV ? {} : { httpOnly: true, path: '/', domain: ".ringm.com.ar" });
-  res.send("logged out");
-});
-
 router.get("/current/me", passport.authenticate("jwt", { session: false }), asyncMiddleware(async (req, res) => {
   const u = await userService.findById(req.user._id);
   const user = {

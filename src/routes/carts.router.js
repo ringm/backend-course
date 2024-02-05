@@ -6,6 +6,8 @@ import { cartService, ticketService } from "../services/index.js";
 import { productService } from "../services/index.js";
 import { isPremiumUser } from "../middleware/isPremiumUser.js";
 import { asyncMiddleware } from "../middleware/async.js";
+import { transport } from "../app.js";
+import { formatMoney } from "../helpers/format.js";
 import passport from "passport";
 
 const router = Router();
@@ -86,6 +88,20 @@ router.post(
       await cartService.update(cart._id, updatedCart);
 
       const ticket = await ticketService.create(req.user.email, amount);
+
+      await transport.sendMail({
+        from: 'Coder Ecommerce <ring.martin@gmail.com>',
+        to: req.user.email,
+        subject: 'Compra realizada con éxito',
+        html: `
+          <div>
+            <h1>¡Gracias por comprar con nosotros!</h1>
+            <p>Su compra se ha realizado con éxito, el código de su ticket es: <b>${ticket.code}</b></p>
+            <p>Total: <b>$${formatMoney(ticket.amount)}</b></p>
+          </div>
+        `,
+        attachments: []
+      })
 
       res.status(200).json({
         message: "Purchase completed",
