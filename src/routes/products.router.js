@@ -1,6 +1,5 @@
 import { Router } from "express";
 import { asyncMiddleware } from "../middleware/async.js";
-import { imagesUploader } from "../middleware/uploader.js";
 import { productService } from "../services/index.js";
 import { cartService } from "../services/index.js";
 import { isAdmin } from "../middleware/isAdmin.js";
@@ -37,15 +36,9 @@ router.post(
   "/",
   passport.authenticate("jwt", { session: false }),
   isAdmin,
-  imagesUploader.single("thumbnails"),
   asyncMiddleware(async (req, res) => {
     await productService.validate(req.body);
-    let thumbnails = [];
-    if (req?.file) {
-      const image = await productService.uploadImage(req.file, req.body.code);
-      thumbnails.push(image);
-    }
-    const product = await productService.create({ ...req.body, thumbnails });
+    const product = await productService.create(req.body);
     res.status(200).json({ message: "Product added", payload: product });
   }),
 );
@@ -54,16 +47,10 @@ router.put(
   "/:id",
   passport.authenticate("jwt", { session: false }),
   isAdmin,
-  imagesUploader.single("thumbnails"),
   asyncMiddleware(async (req, res) => {
-    let thumbnails = [];
-    if (req?.file) {
-      const image = await productService.uploadImage(req.file, req.body.code);
-      thumbnails.push(image);
-    }
     const updatedProduct = await productService.update(
       req.params.id,
-      thumbnails.length > 0 ? { ...req.body, thumbnails } : { ...req.body }
+      req.body
     );
     res.status(200).json({ message: "Product updated", product: updatedProduct });
   }),
