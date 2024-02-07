@@ -37,7 +37,7 @@ export class ProductController {
 
   async getById(id) {
     try {
-      if(id.toString().length !== 24) {
+      if (id.toString().length !== 24) {
         throw new Error("Bad request: invalid id");
       }
       const result = await this.model.findById(id);
@@ -52,7 +52,7 @@ export class ProductController {
 
   async update(id, product) {
     try {
-      if(id.toString().length !== 24) {
+      if (id.toString().length !== 24) {
         throw new Error("Bad request: invalid id");
       }
       const result = await this.model.findByIdAndUpdate(id, product, { new: true });
@@ -67,7 +67,7 @@ export class ProductController {
 
   async delete(id) {
     try {
-      if(id.toString().length !== 24) {
+      if (id.toString().length !== 24) {
         throw new Error("Bad request: invalid id");
       }
       const result = await this.model.findByIdAndDelete(id);
@@ -120,5 +120,21 @@ export class ProductController {
       }),
     );
     return thumbnails;
+  }
+
+  async uploadImage(file, id) {
+    const now  = new Date().getTime();
+    const image = await new Promise((res, rej) => {
+      cloudinary.uploader.upload_stream(
+        { resource_type: 'image', public_id: `product-image-${now}`, folder: `images/${id}`, overwrite: true }, (error, result) => {
+          if (error) {
+            console.error('Error uploading to Cloudinary:', error);
+            rej('Upload failed');
+          } else {
+            res(`${result?.public_id}.${result.format}`);
+          }
+        }).end(file.buffer);
+    })
+    return image;
   }
 }

@@ -152,6 +152,18 @@ export class UserController {
     }
   }
 
+  async updateAvatar(id, avatar) {
+    try {
+      const result = await this.model.findByIdAndUpdate(id, { avatar: avatar }, { new: true });
+      if (!result) {
+        throw new Error("User not found.");
+      }
+      return result;
+    } catch (e) {
+      throw new Error("Couldn't update user avatar.");
+    }
+  }
+
   async uploadDocuments(documents, id) {
     const docs = await Promise.all(
       documents.map((file) => {

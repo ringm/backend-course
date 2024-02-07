@@ -124,9 +124,21 @@ router.get("/current/me", passport.authenticate("jwt", { session: false }), asyn
     status: u.status,
     cart: u.cart,
     documents: u.documents,
+    avatar: u.avatar,
   }
   res.send(user);
 }));
+
+router.post(
+  '/:id/avatar',
+  passport.authenticate("jwt", { session: false }),
+  asyncMiddleware(async (req, res) => {
+    await userService.updateAvatar(req.params.id, req.body.avatar);
+
+    res
+      .status(200)
+      .json({ status: "success", message: "Avatar uploaded successfully" });
+  }))
 
 router.post(
   '/:id/documents',

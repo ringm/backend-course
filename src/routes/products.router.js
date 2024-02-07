@@ -37,12 +37,13 @@ router.post(
   "/",
   passport.authenticate("jwt", { session: false }),
   isAdmin,
-  imagesUploader.array("thumbnails"),
+  imagesUploader.single("thumbnails"),
   asyncMiddleware(async (req, res) => {
     await productService.validate(req.body);
     let thumbnails = [];
-    if (req.files?.length > 0) {
-      thumbnails = await productService.uploadImages(req.files);
+    if (req?.file) {
+      const image = await productService.uploadImage(req.file, req.body.code);
+      thumbnails.push(image);
     }
     const product = await productService.create({ ...req.body, thumbnails });
     res.status(200).json({ message: "Product added", payload: product });
@@ -53,11 +54,12 @@ router.put(
   "/:id",
   passport.authenticate("jwt", { session: false }),
   isAdmin,
-  imagesUploader.array("thumbnails"),
+  imagesUploader.single("thumbnails"),
   asyncMiddleware(async (req, res) => {
     let thumbnails = [];
-    if (req.files?.length > 0) {
-      thumbnails = await productService.uploadImages(req.files);
+    if (req?.file) {
+      const image = await productService.uploadImage(req.file, req.body.code);
+      thumbnails.push(image);
     }
     const updatedProduct = await productService.update(
       req.params.id,

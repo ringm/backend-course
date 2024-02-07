@@ -43,6 +43,10 @@ const userSchema = new mongoose.Schema({
     enum: ["pending", "incomplete", "complete"],
     default: "pending"
   },
+  avatar: {
+    type: String,
+    default: null
+  },
   documents: {
     type: [
       {
