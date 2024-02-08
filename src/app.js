@@ -87,8 +87,10 @@ cloudinary.config({
 });
 
 export const transport = nodemailer.createTransport({
+  host:'smtp.gmail.com',
   service: 'gmail',
   port: 587,
+  secure: false,
   auth: {
     user: process.env.NODEMAILER_USER,
     pass: process.env.NODEMAILER_PASS
